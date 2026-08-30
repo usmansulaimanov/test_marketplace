@@ -6,6 +6,8 @@ import { CartPage } from '../features/cart/CartPage';
 import { AuthPage } from '../features/auth/AuthPage';
 import { ClientDashboardPage } from '../features/client/ClientDashboardPage';
 import { AdminDashboardPage } from '../features/admin/AdminDashboardPage';
+import { ProductDetailPage } from '../features/product/ProductDetailPage';
+import { ProductEditPage } from '../features/product/ProductEditPage';
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +21,14 @@ export const router = createBrowserRouter([
       {
         path: 'catalog',
         element: <CatalogPage />,
+      },
+      {
+        path: 'product/:id',
+        element: <ProductDetailPage />,
+      },
+      {
+        path: 'product/:id/edit',
+        element: <ProductEditPage />,
       },
       {
         path: 'cart',

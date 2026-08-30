@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Star, ShoppingBag, Check, Eye } from 'lucide-react';
+import { Star, ShoppingBag, Check, Edit3 } from 'lucide-react';
 import { Product } from '../../types';
 import { useCartStore } from '../../store/useCartStore';
+import { useAuthStore } from '../../store/useAuthStore';
 import { useToastStore } from '../../store/useToastStore';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,15 +11,18 @@ interface ProductCardProps {
   onOpenDetail?: (product: Product) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpenDetail }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const navigate = useNavigate();
   const { addItem } = useCartStore();
+  const { user } = useAuthStore();
   const { addToast } = useToastStore();
+
   const [isAdded, setIsAdded] = useState(false);
   const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0] || '');
 
   const isOutOfStock = product.stock === 0;
   const isLowStock = product.stock > 0 && product.stock <= 5;
+  const isAdmin = user?.role === 'admin';
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -34,7 +38,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpenDetail 
   };
 
   const handleCardClick = () => {
-    onOpenDetail?.(product);
+    navigate(`/product/${product.id}`);
+  };
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/product/${product.id}/edit`);
   };
 
   return (
@@ -51,13 +60,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpenDetail 
           loading="lazy"
         />
 
-        {/* Quick view hover icon */}
-        <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-          <span className="bg-white text-gray-900 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-md">
-            <Eye className="w-3.5 h-3.5" />
-            <span>Просмотр</span>
-          </span>
-        </div>
+        {/* Admin Edit Action Button on Card */}
+        {isAdmin && (
+          <button
+            onClick={handleEditClick}
+            className="absolute top-2.5 right-2.5 z-10 bg-white/95 hover:bg-white text-gray-900 text-[11px] font-bold px-3 py-1 rounded-xl flex items-center gap-1 shadow-xs transition-all active:scale-95"
+            title="Редактировать товар (Админ)"
+          >
+            <Edit3 className="w-3 h-3 text-[#F14635]" />
+            <span>Изменить</span>
+          </button>
+        )}
 
         {/* Stock alerts */}
         {isOutOfStock ? (
@@ -75,7 +88,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpenDetail 
         ) : null}
 
         {/* Discount badge */}
-        {product.oldPrice && !isOutOfStock && (
+        {product.oldPrice && !isOutOfStock && !isAdmin && (
           <div className="absolute top-2.5 right-2.5">
             <span className="bg-[#F14635] text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded">
               -{Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)}%
@@ -87,9 +100,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOpenDetail 
       {/* Content */}
       <div className="flex-1 flex flex-col justify-between space-y-2 px-1">
         <div>
-          {/* Brand */}
-          <div className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">
-            {product.brand}
+          {/* Brand & ID */}
+          <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">
+            <span>{product.brand}</span>
+            <span className="font-mono text-[10px] font-normal text-gray-300">#{product.id}</span>
           </div>
 
           {/* Title */}

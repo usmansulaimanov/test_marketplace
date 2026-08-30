@@ -7,7 +7,6 @@ interface AuthState {
   isAuthenticated: boolean;
   login: (email: string, role?: Role, name?: string) => void;
   logout: () => void;
-  switchRole: (role: Role) => void;
   updateBalance: (delta: number) => void;
 }
 
@@ -32,7 +31,7 @@ export const useAuthStore = create<AuthState>()(
             name: role === 'admin' ? 'Администратор Маркета' : name,
             email,
             role,
-            balance: 200000,
+            balance: role === 'admin' ? 500000 : 150000,
           },
         });
       },
@@ -41,20 +40,6 @@ export const useAuthStore = create<AuthState>()(
           user: null,
           isAuthenticated: false,
         });
-      },
-      switchRole: (newRole: Role) => {
-        set((state) => ({
-          user: state.user
-            ? { ...state.user, role: newRole, name: newRole === 'admin' ? 'Администратор Маркета' : 'Усман С.' }
-            : {
-                id: 'usr-default',
-                name: newRole === 'admin' ? 'Администратор' : 'Усман С.',
-                email: 'user@kitapall.kz',
-                role: newRole,
-                balance: 150000,
-              },
-          isAuthenticated: true,
-        }));
       },
       updateBalance: (delta: number) => {
         set((state) => {

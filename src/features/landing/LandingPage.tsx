@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, 
@@ -9,13 +9,11 @@ import {
 } from 'lucide-react';
 import { useProductStore } from '../../store/useProductStore';
 import { ProductCard } from '../../components/product/ProductCard';
-import { ProductDetailModal } from '../../components/product/ProductDetailModal';
 import { CATEGORIES } from '../../data/mockProducts';
-import { CategoryId, Product } from '../../types';
+import { CategoryId } from '../../types';
 
 export const LandingPage: React.FC = () => {
   const { products, setSelectedCategory } = useProductStore();
-  const [selectedProductForModal, setSelectedProductForModal] = useState<Product | null>(null);
 
   const hitProducts = products.slice(0, 4);
 
@@ -140,7 +138,6 @@ export const LandingPage: React.FC = () => {
             <ProductCard 
               key={product.id} 
               product={product} 
-              onOpenDetail={(p) => setSelectedProductForModal(p)}
             />
           ))}
         </div>
@@ -184,12 +181,6 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Quick View Modal */}
-      <ProductDetailModal
-        product={selectedProductForModal}
-        onClose={() => setSelectedProductForModal(null)}
-      />
     </div>
   );
 };

@@ -3,9 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { Search, X, RotateCcw } from 'lucide-react';
 import { useProductStore } from '../../store/useProductStore';
 import { ProductCard } from '../../components/product/ProductCard';
-import { ProductDetailModal } from '../../components/product/ProductDetailModal';
 import { CATEGORIES } from '../../data/mockProducts';
-import { CategoryId, Product } from '../../types';
+import { CategoryId } from '../../types';
 
 export const CatalogPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -24,7 +23,6 @@ export const CatalogPage: React.FC = () => {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all');
-  const [selectedProductForModal, setSelectedProductForModal] = useState<Product | null>(null);
 
   // Sync category param from URL if present
   React.useEffect(() => {
@@ -241,7 +239,6 @@ export const CatalogPage: React.FC = () => {
             <ProductCard 
               key={product.id} 
               product={product} 
-              onOpenDetail={(p) => setSelectedProductForModal(p)}
             />
           ))}
         </div>
@@ -262,12 +259,6 @@ export const CatalogPage: React.FC = () => {
           </button>
         </div>
       )}
-
-      {/* Quick View Modal */}
-      <ProductDetailModal
-        product={selectedProductForModal}
-        onClose={() => setSelectedProductForModal(null)}
-      />
     </div>
   );
 };

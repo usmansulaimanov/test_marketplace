@@ -12,6 +12,7 @@ import {
 import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useProductStore } from '../../store/useProductStore';
+import { useUiStore } from '../../store/useUiStore';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -19,8 +20,9 @@ export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { items, getTotalItems } = useCartStore();
-  const { user, isAuthenticated, logout, switchRole } = useAuthStore();
+  const { user, isAuthenticated, logout } = useAuthStore();
   const { searchQuery, setSearchQuery } = useProductStore();
+  const { toggleSidebar } = useUiStore();
 
   const totalCartCount = getTotalItems();
 
@@ -31,22 +33,30 @@ export const Header: React.FC = () => {
     }
   };
 
-  const handleToggleRole = () => {
-    const nextRole = user?.role === 'admin' ? 'client' : 'admin';
-    switchRole(nextRole);
-    if (nextRole === 'admin') {
-      navigate('/admin');
-    } else {
-      navigate('/dashboard');
-    }
+  const handleLogout = () => {
+    logout();
+    navigate('/auth');
   };
+
+  // Only show hamburger menu on dashboard pages
+  const isDashboardRoute = location.pathname.includes('/admin') || location.pathname.includes('/dashboard');
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
         <div className="flex items-center justify-between gap-4 md:gap-8">
-          {/* Logo & Catalog Button */}
-          <div className="flex items-center gap-4 md:gap-6">
+          {/* Menu Button & Logo */}
+          <div className="flex items-center gap-3 md:gap-6">
+            {isDashboardRoute && (
+              <button
+                onClick={toggleSidebar}
+                className="p-2 -ml-2 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+                title="Меню панели управления"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+            )}
+            
             <Link to="/" className="flex items-center">
               <span className="font-black text-xl md:text-2xl tracking-tighter text-gray-900 uppercase">
                 KITAP<span className="text-[#F14635]">ALL</span>
@@ -86,19 +96,6 @@ export const Header: React.FC = () => {
 
           {/* Navigation Action Buttons */}
           <div className="hidden lg:flex items-center gap-3">
-            {/* Quick Role Switcher */}
-            <button
-              onClick={handleToggleRole}
-              className="px-3 py-2 text-xs font-semibold rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 transition-colors"
-              title="Переключить роль Клиент / Админ"
-            >
-              {user?.role === 'admin' ? (
-                <span>Режим: <b className="text-[#F14635]">Админ</b></span>
-              ) : (
-                <span>Режим: <b className="text-gray-900">Клиент</b></span>
-              )}
-            </button>
-
             {/* Cart Link */}
             <Link
               to="/cart"
@@ -122,7 +119,7 @@ export const Header: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <Link
                   to={user?.role === 'admin' ? '/admin' : '/dashboard'}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-800 hover:bg-gray-50 transition-colors bg-gray-50"
+                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-gray-800 hover:bg-gray-50 transition-colors bg-gray-50"
                 >
                   <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-gray-700 shadow-xs">
                     <UserIcon className="w-3.5 h-3.5" />
@@ -130,11 +127,16 @@ export const Header: React.FC = () => {
                   <span className="text-xs font-semibold text-gray-900">
                     {user?.name}
                   </span>
+                  {user?.role === 'admin' && (
+                    <span className="bg-[#FFF1F0] text-[#F14635] text-[9px] font-black px-1.5 py-0.5 rounded">
+                      ADMIN
+                    </span>
+                  )}
                 </Link>
 
                 <button
-                  onClick={logout}
-                  title="Выйти"
+                  onClick={handleLogout}
+                  title="Выйти из аккаунта"
                   className="p-2 text-gray-400 hover:text-red-500 rounded-xl hover:bg-red-50 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
@@ -176,15 +178,6 @@ export const Header: React.FC = () => {
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
           <div className="lg:hidden mt-3 pt-3 pb-2 space-y-2 animate-in fade-in">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-              <span className="text-xs font-medium text-gray-600">Переключить роль:</span>
-              <button
-                onClick={handleToggleRole}
-                className="text-xs font-bold text-[#F14635]"
-              >
-                {user?.role === 'admin' ? 'Администратор' : 'Клиент'}
-              </button>
-            </div>
             <Link
               to="/catalog"
               onClick={() => setMobileMenuOpen(false)}
@@ -205,7 +198,7 @@ export const Header: React.FC = () => {
                 </Link>
                 <button
                   onClick={() => {
-                    logout();
+                    handleLogout();
                     setMobileMenuOpen(false);
                   }}
                   className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-red-600 hover:bg-red-50 font-medium text-xs"
