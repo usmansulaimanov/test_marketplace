@@ -9,12 +9,14 @@ import {
   ShieldCheck, 
   RefreshCw,
   Edit3,
-  AlertCircle
+  AlertCircle,
+  Heart
 } from 'lucide-react';
 import { useProductStore } from '../../store/useProductStore';
 import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useToastStore } from '../../store/useToastStore';
+import { useWishlistStore } from '../../store/useWishlistStore';
 import { ProductCard } from '../../components/product/ProductCard';
 
 export const ProductDetailPage: React.FC = () => {
@@ -25,6 +27,7 @@ export const ProductDetailPage: React.FC = () => {
   const { addItem } = useCartStore();
   const { user } = useAuthStore();
   const { addToast } = useToastStore();
+  const { toggleWishlist, isInWishlist } = useWishlistStore();
 
   const product = products.find((p) => p.id === id);
 
@@ -150,7 +153,7 @@ export const ProductDetailPage: React.FC = () => {
                   ID: #{product.id}
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight mt-1">
+              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight mt-1">
                 {product.title}
               </h1>
             </div>
@@ -160,7 +163,7 @@ export const ProductDetailPage: React.FC = () => {
               <div className="flex items-center text-amber-500">
                 <Star className="w-4 h-4 fill-current" />
               </div>
-              <span className="font-bold text-gray-900">{product.rating}</span>
+              <span className="font-bold text-gray-900 dark:text-white">{product.rating}</span>
               <span className="text-gray-400">·</span>
               <span className="text-gray-500">{product.reviewsCount} отзывов покупателей</span>
               <span className="text-gray-400">·</span>
@@ -168,8 +171,8 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             {/* Price */}
-            <div className="bg-gray-50 p-5 rounded-2xl flex items-baseline gap-3">
-              <span className="text-3xl font-black text-gray-900 tracking-tight">
+            <div className="bg-gray-50 dark:bg-[#111111] p-5 rounded-2xl flex items-baseline gap-3">
+              <span className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
                 {product.price.toLocaleString()} ₸
               </span>
               {product.oldPrice && (
@@ -182,7 +185,7 @@ export const ProductDetailPage: React.FC = () => {
             {/* Size Selector */}
             {product.sizes.length > 0 && (
               <div className="space-y-2">
-                <label className="block text-xs font-bold text-gray-700">
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
                   Выберите размер
                 </label>
                 <div className="flex items-center gap-2 flex-wrap">
@@ -193,8 +196,8 @@ export const ProductDetailPage: React.FC = () => {
                       onClick={() => setSelectedSize(size)}
                       className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
                         selectedSize === size
-                          ? 'bg-gray-900 text-white shadow-xs'
-                          : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                          ? 'bg-gray-900 dark:bg-white text-white dark:text-black shadow-xs'
+                          : 'bg-gray-50 dark:bg-[#111111] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a1a1a]'
                       }`}
                     >
                       {size}
@@ -207,7 +210,7 @@ export const ProductDetailPage: React.FC = () => {
             {/* Color Selector */}
             {product.colors.length > 0 && (
               <div className="space-y-2">
-                <label className="block text-xs font-bold text-gray-700">
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
                   Цвет: <span className="text-gray-500 font-normal">{selectedColor}</span>
                 </label>
                 <div className="flex items-center gap-2 flex-wrap">
@@ -273,6 +276,18 @@ export const ProductDetailPage: React.FC = () => {
                 className="flex-1 bg-gray-900 hover:bg-black text-white py-4 rounded-2xl text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50"
               >
                 Купить сразу
+              </button>
+
+              <button
+                onClick={() => toggleWishlist(product)}
+                className={`p-4 rounded-2xl border transition-all active:scale-95 flex items-center justify-center ${
+                  isInWishlist(product.id)
+                    ? 'border-[#F14635] bg-[#FFF1F0] text-[#F14635]'
+                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-400'
+                }`}
+                title="В избранное"
+              >
+                <Heart className={`w-5 h-5 ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
               </button>
             </div>
 

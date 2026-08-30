@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-50 pt-16 pb-24 lg:pb-16 text-sm text-gray-600 mt-20 rounded-3xl">
+    <footer className="bg-gray-50 dark:bg-[#111111] pt-16 pb-24 lg:pb-16 text-sm text-gray-600 dark:text-gray-400 mt-20 rounded-3xl">
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <span className="font-black text-xl text-gray-900 uppercase tracking-tight">
+              <span className="font-black text-xl text-gray-900 dark:text-white uppercase tracking-tight">
                 KITAP<span className="text-[#F14635]">ALL</span>
               </span>
             </div>
@@ -18,7 +18,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 mb-3 text-xs uppercase tracking-wider">Категории</h4>
+            <h4 className="font-bold text-gray-900 dark:text-white mb-3 text-xs uppercase tracking-wider">Категории</h4>
             <ul className="space-y-2 text-xs text-gray-500">
               <li><Link to="/catalog?cat=headwear" className="hover:text-[#F14635] transition-colors">Головные уборы</Link></li>
               <li><Link to="/catalog?cat=tops" className="hover:text-[#F14635] transition-colors">Верхняя одежда и худи</Link></li>
@@ -28,7 +28,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 mb-3 text-xs uppercase tracking-wider">Клиентам</h4>
+            <h4 className="font-bold text-gray-900 dark:text-white mb-3 text-xs uppercase tracking-wider">Клиентам</h4>
             <ul className="space-y-2 text-xs text-gray-500">
               <li><Link to="/dashboard" className="hover:text-[#F14635] transition-colors">История заказов и трат</Link></li>
               <li><Link to="/cart" className="hover:text-[#F14635] transition-colors">Корзина и доставка</Link></li>
@@ -37,7 +37,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 mb-3 text-xs uppercase tracking-wider">Управление</h4>
+            <h4 className="font-bold text-gray-900 dark:text-white mb-3 text-xs uppercase tracking-wider">Управление</h4>
             <ul className="space-y-2 text-xs text-gray-500">
               <li><Link to="/admin" className="hover:text-[#F14635] transition-colors">Админ-панель</Link></li>
               <li><Link to="/admin" className="hover:text-[#F14635] transition-colors">Учет склада и остатков</Link></li>

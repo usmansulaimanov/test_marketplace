@@ -1,5 +1,8 @@
+import colors from 'tailwindcss/colors';
+
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,6 +10,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        gray: colors.neutral,
         brand: {
           50: '#fff1f0',
           100: '#ffe1df',
@@ -19,7 +23,7 @@ export default {
           card: '#ffffff',
           border: '#eef0f3',
           muted: '#8c95a6',
-          dark: '#111827',
+          dark: '#171717',
         }
       },
       fontFamily: {

@@ -1,28 +1,33 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Search, 
   ShoppingBag, 
   User as UserIcon, 
   Menu, 
-  X, 
   LogOut,
-  LayoutGrid
+  LayoutGrid,
+  Heart,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useProductStore } from '../../store/useProductStore';
 import { useUiStore } from '../../store/useUiStore';
+import { useWishlistStore } from '../../store/useWishlistStore';
+import { useThemeStore } from '../../store/useThemeStore';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { items, getTotalItems } = useCartStore();
   const { user, isAuthenticated, logout } = useAuthStore();
   const { searchQuery, setSearchQuery } = useProductStore();
   const { toggleSidebar } = useUiStore();
+  const { items: wishlistItems } = useWishlistStore();
+  const { theme, toggleTheme } = useThemeStore();
 
   const totalCartCount = getTotalItems();
 
@@ -38,27 +43,22 @@ export const Header: React.FC = () => {
     navigate('/auth');
   };
 
-  // Only show hamburger menu on dashboard pages
-  const isDashboardRoute = location.pathname.includes('/admin') || location.pathname.includes('/dashboard');
-
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100">
+    <header className="sticky top-0 z-40 bg-white/95 dark:bg-black/95 backdrop-blur-md border-b border-gray-100 dark:border-white/10 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
         <div className="flex items-center justify-between gap-4 md:gap-8">
           {/* Menu Button & Logo */}
           <div className="flex items-center gap-3 md:gap-6">
-            {isDashboardRoute && (
-              <button
-                onClick={toggleSidebar}
-                className="p-2 -ml-2 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
-                title="Меню панели управления"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-            )}
+            <button
+              onClick={toggleSidebar}
+              className="p-2 -ml-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] rounded-xl transition-colors"
+              title="Главное меню"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
             
             <Link to="/" className="flex items-center">
-              <span className="font-black text-xl md:text-2xl tracking-tighter text-gray-900 uppercase">
+              <span className="font-black text-xl md:text-2xl tracking-tighter text-gray-900 dark:text-white uppercase">
                 KITAP<span className="text-[#F14635]">ALL</span>
               </span>
             </Link>
@@ -83,7 +83,7 @@ export const Header: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Поиск одежды, обуви, головных уборов..."
-                className="w-full bg-gray-50 border-none focus:bg-gray-100 text-gray-900 rounded-xl pl-4 pr-12 py-2.5 text-xs outline-none transition-all"
+                className="w-full bg-gray-50 dark:bg-[#111111] border-none focus:bg-gray-100 dark:focus:bg-[#1a1a1a] text-gray-900 dark:text-white dark:placeholder-gray-500 rounded-xl pl-4 pr-12 py-2.5 text-xs outline-none transition-all"
               />
               <button
                 type="submit"
@@ -96,10 +96,39 @@ export const Header: React.FC = () => {
 
           {/* Navigation Action Buttons */}
           <div className="hidden lg:flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] rounded-xl transition-all cursor-pointer active:scale-95"
+              title={theme === 'dark' ? 'Включить светлую тему' : 'Включить тёмную тему'}
+              aria-label="Сменить тему оформления"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5 text-amber-400 hover:rotate-45 transition-transform duration-300" />
+              ) : (
+                <Moon className="w-5 h-5 text-gray-700 hover:-rotate-12 transition-transform duration-300" />
+              )}
+            </button>
+
+            {/* Wishlist Link */}
+            <Link
+              to="/wishlist"
+              className="flex items-center gap-2 p-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-colors relative"
+              title="Избранное"
+            >
+              <Heart className="w-5 h-5" />
+              {wishlistItems.length > 0 && (
+                <span className="absolute -top-0 -right-0.5 bg-[#F14635] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {wishlistItems.length}
+                </span>
+              )}
+            </Link>
+
             {/* Cart Link */}
             <Link
               to="/cart"
-              className="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors relative"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-colors relative"
             >
               <div className="relative">
                 <ShoppingBag className="w-5 h-5" />
@@ -109,7 +138,7 @@ export const Header: React.FC = () => {
                   </span>
                 )}
               </div>
-              <span className="text-xs font-bold text-gray-900">
+              <span className="text-xs font-bold text-gray-900 dark:text-white">
                 {items.reduce((s, i) => s + i.product.price * i.quantity, 0).toLocaleString()} ₸
               </span>
             </Link>
@@ -119,16 +148,16 @@ export const Header: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <Link
                   to={user?.role === 'admin' ? '/admin' : '/dashboard'}
-                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-gray-800 hover:bg-gray-50 transition-colors bg-gray-50"
+                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
                 >
-                  <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-gray-700 shadow-xs">
+                  <div className="w-6 h-6 rounded-full bg-white dark:bg-[#222222] flex items-center justify-center text-gray-700 dark:text-gray-300 shadow-xs">
                     <UserIcon className="w-3.5 h-3.5" />
                   </div>
-                  <span className="text-xs font-semibold text-gray-900">
+                  <span className="text-xs font-semibold text-gray-900 dark:text-white">
                     {user?.name}
                   </span>
                   {user?.role === 'admin' && (
-                    <span className="bg-[#FFF1F0] text-[#F14635] text-[9px] font-black px-1.5 py-0.5 rounded">
+                    <span className="bg-[#FFF1F0] dark:bg-[#F14635]/20 text-[#F14635] text-[9px] font-black px-1.5 py-0.5 rounded">
                       ADMIN
                     </span>
                   )}
@@ -154,7 +183,27 @@ export const Header: React.FC = () => {
           </div>
 
           {/* Mobile hamburger toggle */}
-          <div className="flex lg:hidden items-center gap-2">
+          <div className="flex lg:hidden items-center gap-1">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2 text-gray-700 dark:text-gray-300 relative cursor-pointer active:scale-95 transition-transform"
+              title={theme === 'dark' ? 'Включить светлую тему' : 'Включить тёмную тему'}
+              aria-label="Сменить тему оформления"
+            >
+              {theme === 'dark' ? <Sun className="w-6 h-6 text-amber-400" /> : <Moon className="w-6 h-6 text-gray-700" />}
+            </button>
+            <Link
+              to="/wishlist"
+              className="p-2 text-gray-700 relative"
+            >
+              <Heart className="w-6 h-6" />
+              {wishlistItems.length > 0 && (
+                <span className="absolute 0 top-0 right-0 bg-[#F14635] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {wishlistItems.length}
+                </span>
+              )}
+            </Link>
             <Link
               to="/cart"
               className="p-2 text-gray-700 relative"
@@ -166,59 +215,8 @@ export const Header: React.FC = () => {
                 </span>
               )}
             </Link>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-gray-700 hover:bg-gray-100 rounded-lg"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
           </div>
         </div>
-
-        {/* Mobile Dropdown Menu */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden mt-3 pt-3 pb-2 space-y-2 animate-in fade-in">
-            <Link
-              to="/catalog"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gray-50 text-gray-800 font-medium text-xs"
-            >
-              <LayoutGrid className="w-4 h-4 text-[#F14635]" />
-              <span>Каталог товаров</span>
-            </Link>
-            {isAuthenticated ? (
-              <>
-                <Link
-                  to={user?.role === 'admin' ? '/admin' : '/dashboard'}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gray-50 text-gray-800 font-medium text-xs"
-                >
-                  <UserIcon className="w-4 h-4 text-[#F14635]" />
-                  <span>{user?.role === 'admin' ? 'Админ-панель' : 'Личный кабинет (История трат)'}</span>
-                </Link>
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-red-600 hover:bg-red-50 font-medium text-xs"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Выйти из аккаунта</span>
-                </button>
-              </>
-            ) : (
-              <Link
-                to="/auth"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#F14635] text-white font-bold text-xs justify-center"
-              >
-                <UserIcon className="w-4 h-4" />
-                <span>Войти / Регистрация</span>
-              </Link>
-            )}
-          </div>
-        )}
       </div>
     </header>
   );

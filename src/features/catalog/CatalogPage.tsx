@@ -105,11 +105,11 @@ export const CatalogPage: React.FC = () => {
       {/* Seamless Header */}
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white tracking-tight">
             Каталог одежды
           </h1>
           <p className="text-xs text-gray-400 mt-1">
-            Найдено моделей: <b className="text-gray-900">{filteredProducts.length}</b>
+            Найдено моделей: <b className="text-gray-900 dark:text-white">{filteredProducts.length}</b>
           </p>
         </div>
 
@@ -119,7 +119,7 @@ export const CatalogPage: React.FC = () => {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="bg-gray-50 text-gray-800 text-xs font-semibold rounded-xl px-3 py-2 outline-none cursor-pointer hover:bg-gray-100 transition-colors"
+            className="bg-gray-50 dark:bg-[#111111] text-gray-800 dark:text-gray-100 text-xs font-semibold rounded-xl px-3 py-2 outline-none cursor-pointer hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
           >
             <option value="popular">По популярности</option>
             <option value="price_asc">Сначала дешевле</option>
@@ -143,14 +143,14 @@ export const CatalogPage: React.FC = () => {
               onClick={() => handleCategoryChange(cat.id)}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                 isActive
-                  ? 'bg-gray-900 text-white shadow-sm'
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  ? 'bg-gray-900 dark:bg-white text-white dark:text-black shadow-sm'
+                  : 'bg-gray-50 dark:bg-[#111111] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               <span>{cat.name}</span>
               <span
                 className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                  isActive ? 'bg-white/20 text-white' : 'text-gray-400'
+                  isActive ? 'bg-white/20 dark:bg-black/20 text-white dark:text-black' : 'text-gray-400'
                 }`}
               >
                 {count}
@@ -164,7 +164,7 @@ export const CatalogPage: React.FC = () => {
       <div className="flex flex-wrap items-center justify-between gap-4 text-xs pt-1">
         <div className="flex flex-wrap items-center gap-4">
           {/* Stock filter checkbox */}
-          <label className="flex items-center gap-2 font-medium text-gray-700 cursor-pointer select-none">
+          <label className="flex items-center gap-2 font-medium text-gray-700 dark:text-gray-300 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={inStockOnly}

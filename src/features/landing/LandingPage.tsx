@@ -22,16 +22,16 @@ export const LandingPage: React.FC = () => {
       {/* Hero Seamless Section */}
       <section className="py-6 sm:py-10">
         <div className="max-w-4xl space-y-6">
-          <div className="inline-flex items-center gap-2 bg-gray-100 text-gray-800 text-xs font-semibold px-3 py-1 rounded-full">
+          <div className="inline-flex items-center gap-2 bg-gray-100 dark:bg-[#111111] text-gray-800 dark:text-gray-200 text-xs font-semibold px-3 py-1 rounded-full">
             <span>Жаңа топтама 2026</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-gray-900 leading-[1.1]">
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-gray-900 dark:text-white leading-[1.1]">
             Заманауи киім & <br />
             <span className="text-[#F14635]">минимализм стилі</span>
           </h1>
 
-          <p className="text-gray-600 text-base sm:text-lg leading-relaxed max-w-2xl">
+          <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg leading-relaxed max-w-2xl">
             Сапалы табиғи материалдар, қалалық минимализм және күнделікті ыңғайлылық. Головные уборы, верхняя одежда, брюки және премиум аяқ киім.
           </p>
 
@@ -47,7 +47,7 @@ export const LandingPage: React.FC = () => {
             <Link
               to="/catalog?cat=footwear"
               onClick={() => setSelectedCategory('footwear')}
-              className="w-full sm:w-auto bg-gray-50 hover:bg-gray-100 text-gray-900 px-7 py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-1.5 transition-all"
+              className="w-full sm:w-auto bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] text-gray-900 dark:text-white px-7 py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-1.5 transition-all"
             >
               <span>Обувь & кроссовки</span>
               <ArrowRight className="w-4 h-4" />
@@ -58,15 +58,15 @@ export const LandingPage: React.FC = () => {
         {/* Seamless stats row (no lines/boxes) */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-12">
           <div>
-            <span className="block text-3xl font-black text-gray-900 tracking-tight">100%</span>
+            <span className="block text-3xl font-black text-gray-900 dark:text-white tracking-tight">100%</span>
             <span className="text-xs text-gray-500 font-medium">Оригинал сапа</span>
           </div>
           <div>
-            <span className="block text-3xl font-black text-gray-900 tracking-tight">1-2 күн</span>
+            <span className="block text-3xl font-black text-gray-900 dark:text-white tracking-tight">1-2 күн</span>
             <span className="text-xs text-gray-500 font-medium">Жылдам жеткізу</span>
           </div>
           <div>
-            <span className="block text-3xl font-black text-gray-900 tracking-tight">4</span>
+            <span className="block text-3xl font-black text-gray-900 dark:text-white tracking-tight">4</span>
             <span className="text-xs text-gray-500 font-medium">Негізгі категория</span>
           </div>
           <div>
@@ -80,7 +80,7 @@ export const LandingPage: React.FC = () => {
       <section className="space-y-6">
         <div className="flex items-baseline justify-between">
           <div>
-            <h2 className="text-2xl font-black text-gray-900 tracking-tight">Категории одежды</h2>
+            <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Категории одежды</h2>
             <p className="text-xs text-gray-500 mt-1">Таңдаулы бөлімдер бойынша жылдам өту</p>
           </div>
           <Link
@@ -98,13 +98,13 @@ export const LandingPage: React.FC = () => {
               key={category.id}
               to={`/catalog?cat=${category.id}`}
               onClick={() => setSelectedCategory(category.id as CategoryId)}
-              className="group bg-gray-50 hover:bg-gray-100 p-6 rounded-2xl transition-all flex flex-col justify-between h-36"
+              className="group bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#161616] p-6 rounded-2xl transition-all flex flex-col justify-between h-36"
             >
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
                   {category.nameKz}
                 </span>
-                <h3 className="font-bold text-base text-gray-900 group-hover:text-[#F14635] transition-colors mt-1">
+                <h3 className="font-bold text-base text-gray-900 dark:text-white group-hover:text-[#F14635] transition-colors mt-1">
                   {category.name}
                 </h3>
               </div>
@@ -121,7 +121,7 @@ export const LandingPage: React.FC = () => {
       <section className="space-y-6">
         <div className="flex items-baseline justify-between">
           <div>
-            <h2 className="text-2xl font-black text-gray-900 tracking-tight">Хиты продаж</h2>
+            <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Хиты продаж</h2>
             <p className="text-xs text-gray-500 mt-1">Ең көп сұранысқа ие заманауи киімдер</p>
           </div>
           <Link
@@ -145,36 +145,36 @@ export const LandingPage: React.FC = () => {
 
       {/* Value Proposition Seamless Section */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-        <div className="bg-gray-50 p-6 rounded-2xl flex items-start gap-4">
-          <div className="p-3 bg-white text-gray-900 rounded-xl shadow-xs">
+        <div className="bg-gray-50 dark:bg-[#111111] p-6 rounded-2xl flex items-start gap-4">
+          <div className="p-3 bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl shadow-xs">
             <Truck className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="font-bold text-sm text-gray-900">Жылдам жеткізу</h4>
+            <h4 className="font-bold text-sm text-gray-900 dark:text-white">Жылдам жеткізу</h4>
             <p className="text-xs text-gray-500 mt-1 leading-relaxed">
               Қазақстанның барлық қалаларына 1-3 күн ішінде курьер арқылы.
             </p>
           </div>
         </div>
 
-        <div className="bg-gray-50 p-6 rounded-2xl flex items-start gap-4">
-          <div className="p-3 bg-white text-gray-900 rounded-xl shadow-xs">
+        <div className="bg-gray-50 dark:bg-[#111111] p-6 rounded-2xl flex items-start gap-4">
+          <div className="p-3 bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl shadow-xs">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="font-bold text-sm text-gray-900">Сапа кепілдігі</h4>
+            <h4 className="font-bold text-sm text-gray-900 dark:text-white">Сапа кепілдігі</h4>
             <p className="text-xs text-gray-500 mt-1 leading-relaxed">
               Тек табиғи маталар мен тексерілген премиум брендтер.
             </p>
           </div>
         </div>
 
-        <div className="bg-gray-50 p-6 rounded-2xl flex items-start gap-4">
-          <div className="p-3 bg-white text-gray-900 rounded-xl shadow-xs">
+        <div className="bg-gray-50 dark:bg-[#111111] p-6 rounded-2xl flex items-start gap-4">
+          <div className="p-3 bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl shadow-xs">
             <RefreshCw className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="font-bold text-sm text-gray-900">Оңай қайтару</h4>
+            <h4 className="font-bold text-sm text-gray-900 dark:text-white">Оңай қайтару</h4>
             <p className="text-xs text-gray-500 mt-1 leading-relaxed">
               Өлшемі сәйкес келмесе, 14 күн ішінде кедергісіз айырбастау.
             </p>

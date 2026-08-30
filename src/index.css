@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-white text-[#111827] font-sans antialiased;
+    @apply bg-white text-gray-900 font-sans antialiased;
     -webkit-tap-highlight-color: transparent;
   }
 }
@@ -16,14 +16,13 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #ffffff;
+  @apply bg-white dark:bg-black;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
-  border-radius: 9999px;
+  @apply bg-neutral-300 dark:bg-neutral-800 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
+  @apply bg-neutral-400 dark:bg-neutral-700;
 }

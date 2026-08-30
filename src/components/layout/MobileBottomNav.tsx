@@ -26,7 +26,7 @@ export const MobileBottomNav: React.FC = () => {
   ];
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 py-2 px-4 shadow-lg safe-area-bottom">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-black border-t border-gray-200 dark:border-white/10 py-2 px-4 shadow-lg safe-area-bottom">
       <div className="flex items-center justify-around">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -36,7 +36,7 @@ export const MobileBottomNav: React.FC = () => {
               to={item.to}
               className={({ isActive }) =>
                 `flex flex-col items-center justify-center relative py-1 px-3 rounded-lg transition-colors ${
-                  isActive ? 'text-[#F14635] font-semibold' : 'text-gray-500 hover:text-gray-900'
+                  isActive ? 'text-[#F14635] font-semibold' : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'
                 }`
               }
             >

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { 
-  Wallet, 
   ShoppingBag, 
   TrendingUp, 
   CheckCircle2, 
@@ -10,44 +9,31 @@ import {
   Receipt,
   FileText,
   Printer,
-  LogOut,
   MapPin,
   ShieldCheck,
-  SlidersHorizontal,
-  ChevronRight,
-  X
+  
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useOrderStore } from '../../store/useOrderStore';
-import { useUiStore } from '../../store/useUiStore';
 import { Modal } from '../../components/ui/Modal';
 import { Order } from '../../types';
 
 type ClientTab = 'overview' | 'orders' | 'profile';
 
 export const ClientDashboardPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
+    const { user } = useAuthStore();
   const { orders, getTotalExpenses } = useOrderStore();
-  const { isSidebarOpen, setSidebarOpen } = useUiStore();
-
-  const [activeTab, setActiveTab] = useState<ClientTab>('overview');
+  
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = (searchParams.get('tab') as ClientTab) || 'overview';
   const [selectedReceiptOrder, setSelectedReceiptOrder] = useState<Order | null>(null);
 
   const totalSpent = getTotalExpenses();
   const ordersCount = orders.length;
   const avgCheck = ordersCount > 0 ? Math.round(totalSpent / ordersCount) : 0;
 
-  const handleLogout = () => {
-    logout();
-    navigate('/auth');
-  };
-
-  const handleTabSelect = (tab: ClientTab) => {
-    setActiveTab(tab);
-    setSidebarOpen(false);
-  };
-
+  
+  
   return (
     <div className="pb-16 pt-2">
       {/* Top Breadcrumb & Actions */}
@@ -72,122 +58,31 @@ export const ClientDashboardPage: React.FC = () => {
         </Link>
       </div>
 
-      {/* Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm z-40 transition-opacity animate-in fade-in"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      
 
-      {/* Sliding Sidebar Drawer */}
-      <aside 
-        className={`fixed inset-y-0 left-0 z-50 w-[300px] bg-white shadow-2xl transform transition-transform duration-300 ease-out flex flex-col ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="p-5 flex items-center justify-between border-b border-gray-100">
-          <span className="font-black text-lg text-gray-900 tracking-tight">Меню клиента</span>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="p-2 bg-gray-50 hover:bg-gray-100 text-gray-500 rounded-xl transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="p-5 overflow-y-auto flex-1 space-y-6">
-          {/* User Profile Card */}
-          <div className="bg-gray-50 rounded-3xl p-5 space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-white text-gray-900 flex items-center justify-center font-black text-lg shadow-xs">
-                {user?.name?.charAt(0) || 'U'}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-sm text-gray-900 truncate">{user?.name}</h3>
-                </div>
-                <p className="text-[11px] text-gray-400 truncate mt-0.5">{user?.email}</p>
-              </div>
-            </div>
-
-            {/* Quick Balance Widget */}
-            <div className="bg-white rounded-2xl p-3 flex items-center justify-between shadow-xs">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-50 rounded-xl text-gray-800">
-                  <Wallet className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-[10px] text-gray-400 block font-semibold uppercase">Баланс Kaspi</span>
-                  <span className="text-sm font-black text-gray-900">
-                    {(user?.balance || 0).toLocaleString()} ₸
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation Menu */}
-          <nav className="bg-gray-50 rounded-3xl p-2 space-y-1 text-xs font-bold">
+      {/* Direct Horizontal Tabs Bar for Client */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none">
+        {[
+          { id: 'overview', label: 'Мои расходы' },
+          { id: 'orders', label: `Мои заказы (${orders.length})` },
+          { id: 'profile', label: 'Настройки профиля' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
             <button
-              onClick={() => handleTabSelect('overview')}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all ${
-                activeTab === 'overview'
-                  ? 'bg-white text-gray-900 shadow-xs'
-                  : 'text-gray-600 hover:bg-white/60 hover:text-gray-900'
+              key={tab.id}
+              onClick={() => setSearchParams({ tab: tab.id })}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                isActive
+                  ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xs'
+                  : 'bg-gray-50 dark:bg-[#111111] text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] hover:text-gray-900 dark:hover:text-white'
               }`}
             >
-              <div className="flex items-center gap-3">
-                <TrendingUp className={`w-4 h-4 ${activeTab === 'overview' ? 'text-[#F14635]' : 'text-gray-400'}`} />
-                <span>Обзор и аналитика</span>
-              </div>
-              <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+              <span>{tab.label}</span>
             </button>
-
-            <button
-              onClick={() => handleTabSelect('orders')}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all ${
-                activeTab === 'orders'
-                  ? 'bg-white text-gray-900 shadow-xs'
-                  : 'text-gray-600 hover:bg-white/60 hover:text-gray-900'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <ShoppingBag className={`w-4 h-4 ${activeTab === 'orders' ? 'text-[#F14635]' : 'text-gray-400'}`} />
-                <span>Мои покупки</span>
-              </div>
-              <span className="bg-gray-100 text-gray-700 text-[10px] px-2 py-0.5 rounded-full font-bold">
-                {ordersCount}
-              </span>
-            </button>
-
-            <button
-              onClick={() => handleTabSelect('profile')}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all ${
-                activeTab === 'profile'
-                  ? 'bg-white text-gray-900 shadow-xs'
-                  : 'text-gray-600 hover:bg-white/60 hover:text-gray-900'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <SlidersHorizontal className={`w-4 h-4 ${activeTab === 'profile' ? 'text-[#F14635]' : 'text-gray-400'}`} />
-                <span>Профиль и настройки</span>
-              </div>
-              <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-            </button>
-          </nav>
-
-          <div className="pt-2">
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-6 py-3.5 rounded-2xl text-red-600 font-bold text-xs hover:bg-red-50 transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Выйти из аккаунта</span>
-            </button>
-          </div>
-        </div>
-      </aside>
+          );
+        })}
+      </div>
 
       {/* Main Content Area */}
       <main className="w-full space-y-6">
@@ -251,7 +146,7 @@ export const ClientDashboardPage: React.FC = () => {
                 </div>
                 {orders.length > 0 && (
                   <button
-                    onClick={() => setActiveTab('orders')}
+                    onClick={() => setSearchParams({ tab: 'orders' })}
                     className="text-xs font-bold text-[#F14635] hover:underline"
                   >
                     Смотреть все ({orders.length})

@@ -1,47 +1,41 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { 
   Plus, 
   Minus, 
   Trash2, 
-  PlusCircle, 
   RotateCcw,
   CheckCircle2,
   AlertTriangle,
-  XCircle,
   Search,
   Lock,
   ArrowRight,
   Edit3,
-  LayoutDashboard,
   Boxes,
-  ShoppingBag,
   TrendingUp,
-  LogOut,
-  ChevronRight,
   Calendar,
-  X,
   MapPin
 } from 'lucide-react';
 import { useProductStore } from '../../store/useProductStore';
 import { useOrderStore } from '../../store/useOrderStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useToastStore } from '../../store/useToastStore';
-import { useUiStore } from '../../store/useUiStore';
+
 import { CategoryId } from '../../types';
 import { CATEGORIES } from '../../data/mockProducts';
 
 type AdminTab = 'analytics' | 'inventory' | 'orders' | 'add_product';
 
 export const AdminDashboardPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
+  
+  const { user } = useAuthStore();
   const { products, updateStock, deleteProduct, addProduct, resetToDefaults } = useProductStore();
   const { orders, getTotalExpenses } = useOrderStore();
   const { addToast } = useToastStore();
-  const { isSidebarOpen, setSidebarOpen } = useUiStore();
+  // Removed uiStore
 
-  const [activeTab, setActiveTab] = useState<AdminTab>('analytics');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = (searchParams.get('tab') as AdminTab) || 'analytics';
   
   const [filterCategory, setFilterCategory] = useState<CategoryId>('all');
   const [search, setSearch] = useState('');
@@ -61,13 +55,13 @@ export const AdminDashboardPage: React.FC = () => {
   // If user is not logged in as Admin, show access gate
   if (user?.role !== 'admin') {
     return (
-      <div className="max-w-md mx-auto my-16 bg-gray-50 rounded-3xl p-8 sm:p-10 text-center space-y-5">
-        <div className="w-16 h-16 bg-[#FFF1F0] text-[#F14635] rounded-full flex items-center justify-center mx-auto shadow-xs">
+      <div className="max-w-md mx-auto my-16 bg-gray-50 dark:bg-[#111111] rounded-3xl p-8 sm:p-10 text-center space-y-5">
+        <div className="w-16 h-16 bg-[#FFF1F0] dark:bg-red-900/30 text-[#F14635] rounded-full flex items-center justify-center mx-auto shadow-xs">
           <Lock className="w-8 h-8" />
         </div>
         <div className="space-y-1">
-          <h2 className="text-2xl font-black text-gray-900">Доступ ограничен</h2>
-          <p className="text-xs text-gray-500 leading-relaxed">
+          <h2 className="text-2xl font-black text-gray-900 dark:text-gray-100">Доступ ограничен</h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
             Раздел склада и управления доступен только для авторизованных администраторов.
           </p>
         </div>
@@ -99,41 +93,60 @@ export const AdminDashboardPage: React.FC = () => {
 
   const handleCreateProduct = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTitle.trim()) return;
+    const cleanTitle = newTitle.trim();
+    const parsedPrice = Math.max(0, Number(newPrice) || 0);
+    const parsedOldPrice = newOldPrice ? Math.max(0, Number(newOldPrice)) : undefined;
+    const parsedStock = Math.max(0, Number(newStock) || 0);
+
+    if (!cleanTitle) {
+      addToast({
+        message: 'Укажите название товара',
+        type: 'error',
+      });
+      return;
+    }
+
+    if (parsedPrice <= 0) {
+      addToast({
+        message: 'Цена товара должна быть больше 0 ₸',
+        type: 'error',
+      });
+      return;
+    }
 
     addProduct({
-      title: newTitle.trim(),
+      title: cleanTitle,
       brand: newBrand.trim() || 'KitapAll Exclusive',
       category: newCategory,
-      price: Number(newPrice),
-      oldPrice: newOldPrice ? Number(newOldPrice) : undefined,
+      price: parsedPrice,
+      oldPrice: parsedOldPrice,
       rating: 5.0,
       reviewsCount: 1,
-      imageUrl: newImageUrl.trim(),
-      stock: Number(newStock),
-      description: newDescription.trim(),
+      imageUrl: newImageUrl.trim() || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=80',
+      stock: parsedStock,
+      description: newDescription.trim() || 'Премиальное качество, создано для комфорта.',
       sizes: newSizes.split(',').map((s) => s.trim()).filter(Boolean),
       colors: newColors.split(',').map((c) => c.trim()).filter(Boolean),
     });
 
     addToast({
-      message: `Товар «${newTitle}» добавлен на склад (${newStock} шт.)`,
+      message: `Товар «${cleanTitle}» добавлен на склад (${parsedStock} шт.)`,
       type: 'success',
     });
 
+    // Full form reset
     setNewTitle('');
     setNewBrand('');
-    setActiveTab('inventory');
-  };
+    setNewPrice(9990);
+    setNewOldPrice(undefined);
+    setNewStock(20);
+    setNewImageUrl('https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=80');
+    setNewSizes('S, M, L, XL');
+    setNewColors('Черный, Белый');
+    setNewDescription('Премиальное качество, создано для комфорта.');
+    setNewCategory('headwear');
 
-  const handleLogout = () => {
-    logout();
-    navigate('/auth');
-  };
-
-  const handleTabSelect = (tab: AdminTab) => {
-    setActiveTab(tab);
-    setSidebarOpen(false);
+    setSearchParams({ tab: 'inventory' });
   };
 
   return (
@@ -143,23 +156,21 @@ export const AdminDashboardPage: React.FC = () => {
         <div className="flex items-center gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
-                Панель управления
+              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-gray-100 tracking-tight">
+                Админ-панель
               </h1>
-              <span className="bg-[#FFF1F0] text-[#F14635] text-[10px] font-bold px-2.5 py-0.5 rounded-full hidden sm:inline-flex">
-                Admin
+              <span className="bg-[#FFF1F0] dark:bg-red-900/30 text-[#F14635] px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider">
+                PRO
               </span>
             </div>
-            <p className="text-xs text-gray-400 mt-0.5">
-              Учет остатков, аналитика продаж и каталог товаров
-            </p>
+            <p className="text-xs text-gray-400 mt-1">Управление складом, товарами и заказами</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <Link
             to="/catalog"
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-gray-50 text-gray-700 font-bold text-xs hover:bg-gray-100 transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-gray-50 dark:bg-[#111111] text-gray-700 dark:text-gray-300 font-bold text-xs hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
           >
             <span>В магазин</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -167,133 +178,37 @@ export const AdminDashboardPage: React.FC = () => {
           <button
             onClick={resetToDefaults}
             title="Сбросить склад к исходным демо-данным"
-            className="p-2.5 rounded-2xl bg-gray-50 text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+            className="p-2.5 rounded-2xl bg-gray-50 dark:bg-[#111111] text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      {/* Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm z-40 transition-opacity animate-in fade-in"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sliding Sidebar Drawer */}
-      <aside 
-        className={`fixed inset-y-0 left-0 z-50 w-[300px] bg-white shadow-2xl transform transition-transform duration-300 ease-out flex flex-col ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="p-5 flex items-center justify-between border-b border-gray-100">
-          <span className="font-black text-lg text-gray-900 tracking-tight">Меню склада</span>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="p-2 bg-gray-50 hover:bg-gray-100 text-gray-500 rounded-xl transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="p-5 overflow-y-auto flex-1 space-y-6">
-          {/* Admin Profile Box */}
-          <div className="bg-gray-50 rounded-3xl p-5 space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-[#F14635] text-white flex items-center justify-center font-black text-lg shadow-sm">
-                A
-              </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="font-bold text-sm text-gray-900 truncate">Администратор</h3>
-                <p className="text-[11px] text-gray-400 font-mono truncate">{user?.email}</p>
-              </div>
-            </div>
-            <div className="bg-white rounded-xl p-2.5 text-[11px] text-gray-500 flex items-center justify-between shadow-xs">
-              <span>Доступ:</span>
-              <span className="font-bold text-gray-900">Root</span>
-            </div>
-          </div>
-
-          {/* Sidebar Menu */}
-          <nav className="bg-gray-50 rounded-3xl p-2 space-y-1 text-xs font-bold">
+      {/* Direct Horizontal Tabs Bar for Admin */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none">
+        {[
+          { id: 'analytics', label: 'Аналитика и обзор' },
+          { id: 'inventory', label: `Склад и остатки (${products.length})` },
+          { id: 'orders', label: 'Все заказы' },
+          { id: 'add-product', label: '+ Добавить товар' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
             <button
-              onClick={() => handleTabSelect('analytics')}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all ${
-                activeTab === 'analytics'
-                  ? 'bg-white text-gray-900 shadow-xs'
-                  : 'text-gray-600 hover:bg-white/60 hover:text-gray-900'
+              key={tab.id}
+              onClick={() => setSearchParams({ tab: tab.id })}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                isActive
+                  ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xs'
+                  : 'bg-gray-50 dark:bg-[#111111] text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] hover:text-gray-900 dark:hover:text-white'
               }`}
             >
-              <div className="flex items-center gap-3">
-                <LayoutDashboard className={`w-4 h-4 ${activeTab === 'analytics' ? 'text-[#F14635]' : 'text-gray-400'}`} />
-                <span>Обзор и аналитика</span>
-              </div>
-              <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+              <span>{tab.label}</span>
             </button>
-
-            <button
-              onClick={() => handleTabSelect('inventory')}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all ${
-                activeTab === 'inventory'
-                  ? 'bg-white text-gray-900 shadow-xs'
-                  : 'text-gray-600 hover:bg-white/60 hover:text-gray-900'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Boxes className={`w-4 h-4 ${activeTab === 'inventory' ? 'text-[#F14635]' : 'text-gray-400'}`} />
-                <span>Склад и остатки</span>
-              </div>
-              <span className="bg-gray-100 text-gray-700 text-[10px] px-2 py-0.5 rounded-full font-bold">
-                {products.length}
-              </span>
-            </button>
-
-            <button
-              onClick={() => handleTabSelect('orders')}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all ${
-                activeTab === 'orders'
-                  ? 'bg-white text-gray-900 shadow-xs'
-                  : 'text-gray-600 hover:bg-white/60 hover:text-gray-900'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <ShoppingBag className={`w-4 h-4 ${activeTab === 'orders' ? 'text-[#F14635]' : 'text-gray-400'}`} />
-                <span>Заказы клиентов</span>
-              </div>
-              <span className="bg-gray-100 text-gray-700 text-[10px] px-2 py-0.5 rounded-full font-bold">
-                {orders.length}
-              </span>
-            </button>
-
-            <button
-              onClick={() => handleTabSelect('add_product')}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all ${
-                activeTab === 'add_product'
-                  ? 'bg-white text-gray-900 shadow-xs'
-                  : 'text-gray-600 hover:bg-white/60 hover:text-gray-900'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <PlusCircle className={`w-4 h-4 ${activeTab === 'add_product' ? 'text-[#F14635]' : 'text-gray-400'}`} />
-                <span>Добавить товар</span>
-              </div>
-              <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-            </button>
-          </nav>
-
-          <div className="pt-2">
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-6 py-3.5 rounded-2xl text-red-600 font-bold text-xs hover:bg-red-50 transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Выйти из админки</span>
-            </button>
-          </div>
-        </div>
-      </aside>
+          );
+        })}
+      </div>
 
       {/* Main Content Area */}
       <main className="w-full space-y-6">
@@ -351,7 +266,6 @@ export const AdminDashboardPage: React.FC = () => {
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-gray-400 font-medium">Нет в наличии</span>
                   <div className="p-2 bg-white text-rose-600 rounded-xl shadow-xs">
-                    <XCircle className="w-4 h-4" />
                   </div>
                 </div>
                 <h3 className="text-3xl font-black text-rose-600 tracking-tight">
@@ -371,7 +285,7 @@ export const AdminDashboardPage: React.FC = () => {
                   <p className="text-xs text-gray-400">Распределение товаров по разделам</p>
                 </div>
                 <button
-                  onClick={() => handleTabSelect('inventory')}
+                  onClick={() => setSearchParams({ tab: 'inventory' })}
                   className="text-xs font-bold text-[#F14635] hover:underline"
                 >
                   К таблице склада
@@ -516,7 +430,6 @@ export const AdminDashboardPage: React.FC = () => {
                         <td className="py-3 px-3">
                           {isOutOfStock ? (
                             <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                              <XCircle className="w-3 h-3" />
                               <span>Нет</span>
                             </span>
                           ) : isLow ? (
@@ -696,35 +609,38 @@ export const AdminDashboardPage: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
-                  <label className="font-bold text-gray-700 block">Цена (₸)</label>
+                  <label className="font-bold text-gray-700 dark:text-gray-300 block">Цена (₸)</label>
                   <input
                     type="number"
+                    min="1"
                     required
                     value={newPrice}
-                    onChange={(e) => setNewPrice(Number(e.target.value))}
-                    className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs font-bold"
+                    onChange={(e) => setNewPrice(Math.max(0, Number(e.target.value)))}
+                    className="w-full bg-white dark:bg-[#111111] dark:border dark:border-neutral-800 rounded-2xl px-4 py-3 text-xs text-gray-900 dark:text-white outline-none shadow-xs font-bold"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="font-bold text-gray-700 block">Старая цена (₸)</label>
+                  <label className="font-bold text-gray-700 dark:text-gray-300 block">Старая цена (₸)</label>
                   <input
                     type="number"
+                    min="0"
                     value={newOldPrice || ''}
-                    onChange={(e) => setNewOldPrice(e.target.value ? Number(e.target.value) : undefined)}
+                    onChange={(e) => setNewOldPrice(e.target.value ? Math.max(0, Number(e.target.value)) : undefined)}
                     placeholder="Не обязательно"
-                    className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs"
+                    className="w-full bg-white dark:bg-[#111111] dark:border dark:border-neutral-800 rounded-2xl px-4 py-3 text-xs text-gray-900 dark:text-white outline-none shadow-xs"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="font-bold text-gray-700 block">Количество на складе (шт.)</label>
+                  <label className="font-bold text-gray-700 dark:text-gray-300 block">Количество на складе (шт.)</label>
                   <input
                     type="number"
+                    min="0"
                     required
                     value={newStock}
-                    onChange={(e) => setNewStock(Number(e.target.value))}
-                    className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs font-bold"
+                    onChange={(e) => setNewStock(Math.max(0, Number(e.target.value)))}
+                    className="w-full bg-white dark:bg-[#111111] dark:border dark:border-neutral-800 rounded-2xl px-4 py-3 text-xs text-gray-900 dark:text-white outline-none shadow-xs font-bold"
                   />
                 </div>
               </div>
@@ -748,7 +664,6 @@ export const AdminDashboardPage: React.FC = () => {
                     type="text"
                     value={newSizes}
                     onChange={(e) => setNewSizes(e.target.value)}
-                    placeholder="S, M, L, XL"
                     className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs"
                   />
                 </div>

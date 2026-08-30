@@ -1,5 +1,6 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import { Layout } from '../components/layout/Layout';
+import { ProtectedRoute } from '../components/layout/ProtectedRoute';
 import { LandingPage } from '../features/landing/LandingPage';
 import { CatalogPage } from '../features/catalog/CatalogPage';
 import { CartPage } from '../features/cart/CartPage';
@@ -8,6 +9,9 @@ import { ClientDashboardPage } from '../features/client/ClientDashboardPage';
 import { AdminDashboardPage } from '../features/admin/AdminDashboardPage';
 import { ProductDetailPage } from '../features/product/ProductDetailPage';
 import { ProductEditPage } from '../features/product/ProductEditPage';
+import { OrderSuccessPage } from '../features/checkout/OrderSuccessPage';
+import { WishlistPage } from '../features/wishlist/WishlistPage';
+import { NotFoundPage } from '../features/misc/NotFoundPage';
 
 export const router = createBrowserRouter([
   {
@@ -27,10 +31,6 @@ export const router = createBrowserRouter([
         element: <ProductDetailPage />,
       },
       {
-        path: 'product/:id/edit',
-        element: <ProductEditPage />,
-      },
-      {
         path: 'cart',
         element: <CartPage />,
       },
@@ -39,16 +39,40 @@ export const router = createBrowserRouter([
         element: <AuthPage />,
       },
       {
-        path: 'dashboard',
-        element: <ClientDashboardPage />,
+        path: 'wishlist',
+        element: <WishlistPage />,
       },
       {
-        path: 'admin',
-        element: <AdminDashboardPage />,
+        // Protected Admin Routes
+        element: <ProtectedRoute allowedRole="admin" />,
+        children: [
+          {
+            path: 'admin',
+            element: <AdminDashboardPage />,
+          },
+          {
+            path: 'product/:id/edit',
+            element: <ProductEditPage />,
+          },
+        ]
+      },
+      {
+        // Protected Client Routes
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: 'dashboard',
+            element: <ClientDashboardPage />,
+          },
+          {
+            path: 'order-success/:id',
+            element: <OrderSuccessPage />,
+          },
+        ]
       },
       {
         path: '*',
-        element: <Navigate to="/" replace />,
+        element: <NotFoundPage />,
       },
     ],
   },
