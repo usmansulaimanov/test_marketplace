@@ -1,17 +1,32 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, LayoutGrid, ShoppingBag, User, ShieldAlert } from 'lucide-react';
+import { 
+  Home, 
+  LayoutGrid, 
+  ShoppingBag, 
+  Heart, 
+  User, 
+  ShieldCheck, 
+  Boxes, 
+  TrendingUp, 
+  Store 
+} from 'lucide-react';
 import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useSellerStore } from '../../store/useSellerStore';
 
 export const MobileBottomNav: React.FC = () => {
   const { getTotalItems } = useCartStore();
   const { user } = useAuthStore();
+  const { orders: sellerOrders } = useSellerStore();
+  
   const cartCount = getTotalItems();
+  const newSellerOrdersCount = sellerOrders.filter((o) => o.status === 'new').length;
 
-  const navItems = [
+  let navItems = [
     { to: '/', label: 'Главная', icon: Home },
     { to: '/catalog', label: 'Каталог', icon: LayoutGrid },
+    { to: '/wishlist', label: 'Избранное', icon: Heart },
     { 
       to: '/cart', 
       label: 'Корзина', 
@@ -19,14 +34,37 @@ export const MobileBottomNav: React.FC = () => {
       badge: cartCount > 0 ? cartCount : undefined 
     },
     { 
-      to: user?.role === 'admin' ? '/admin' : '/dashboard', 
-      label: user?.role === 'admin' ? 'Админка' : 'Кабинет', 
-      icon: user?.role === 'admin' ? ShieldAlert : User 
+      to: user ? '/dashboard' : '/auth', 
+      label: user ? 'Кабинет' : 'Войти', 
+      icon: User 
     },
   ];
 
+  if (user?.role === 'admin') {
+    navItems = [
+      { to: '/', label: 'Главная', icon: Home },
+      { to: '/catalog', label: 'Витрина', icon: LayoutGrid },
+      { to: '/admin?tab=inventory', label: 'Склад', icon: Boxes },
+      { to: '/admin?tab=orders', label: 'Заказы', icon: ShoppingBag },
+      { to: '/admin', label: 'Админка', icon: ShieldCheck },
+    ];
+  } else if (user?.role === 'seller') {
+    navItems = [
+      { to: '/seller', label: 'Обзор', icon: Store },
+      { to: '/seller/products', label: 'Товары', icon: Boxes },
+      { 
+        to: '/seller/orders', 
+        label: 'Заказы', 
+        icon: ShoppingBag, 
+        badge: newSellerOrdersCount > 0 ? newSellerOrdersCount : undefined 
+      },
+      { to: '/seller/analytics', label: 'Аналитика', icon: TrendingUp },
+      { to: '/catalog', label: 'Витрина', icon: LayoutGrid },
+    ];
+  }
+
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-black border-t border-gray-200 dark:border-white/10 py-2 px-4 shadow-lg safe-area-bottom">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-black border-t border-gray-100 dark:border-neutral-800 py-2 px-2 shadow-lg safe-area-bottom">
       <div className="flex items-center justify-around">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -35,8 +73,8 @@ export const MobileBottomNav: React.FC = () => {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `flex flex-col items-center justify-center relative py-1 px-3 rounded-lg transition-colors ${
-                  isActive ? 'text-[#F14635] font-semibold' : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'
+                `flex flex-col items-center justify-center relative py-1 px-2.5 rounded-xl transition-colors ${
+                  isActive ? 'text-[#F14635] font-bold' : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'
                 }`
               }
             >

@@ -68,7 +68,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'cart',
-        element: <CartPage />,
+        element: (
+          <ProtectedRoute allowedRoles={['client']}>
+            <CartPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'auth',
@@ -76,7 +80,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'wishlist',
-        element: <WishlistPage />,
+        element: (
+          <ProtectedRoute allowedRoles={['client']}>
+            <WishlistPage />
+          </ProtectedRoute>
+        ),
       },
       {
         // Protected Admin Routes

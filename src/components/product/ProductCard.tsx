@@ -71,16 +71,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Top Right Actions */}
         <div className="absolute top-2.5 right-2.5 z-10 flex flex-col gap-2">
-          {/* Wishlist Button */}
-          <button
-            onClick={handleWishlistClick}
-            className="bg-white/95 dark:bg-[#111111]/95 hover:bg-white dark:hover:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 p-2 rounded-xl flex items-center justify-center shadow-xs transition-all active:scale-95 group/wishlist"
-            title="В избранное"
-          >
-            <Heart 
-              className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-[#F14635] text-[#F14635]' : 'text-gray-400 group-hover/wishlist:text-[#F14635]'}`} 
-            />
-          </button>
+          {/* Wishlist Button - ONLY for client/guests */}
+          {!isAdmin && user?.role !== 'seller' && (
+            <button
+              onClick={handleWishlistClick}
+              className="bg-white/95 dark:bg-[#111111]/95 hover:bg-white dark:hover:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 p-2 rounded-xl flex items-center justify-center shadow-xs transition-all active:scale-95 group/wishlist"
+              title="В избранное"
+            >
+              <Heart 
+                className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-[#F14635] text-[#F14635]' : 'text-gray-400 group-hover/wishlist:text-[#F14635]'}`} 
+              />
+            </button>
+          )}
 
           {/* Admin Edit Action Button on Card */}
           {isAdmin && (
@@ -180,29 +182,46 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             )}
           </div>
 
-          <button
-            onClick={handleAddToCart}
-            disabled={isOutOfStock}
-            className={`flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-              isOutOfStock
-                ? 'bg-gray-100 dark:bg-[#111111] text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                : isAdded
-                ? 'bg-gray-900 dark:bg-white text-white dark:text-black'
-                : 'bg-[#F14635] hover:bg-[#E03221] active:scale-95 text-white shadow-xs'
-            }`}
-          >
-            {isAdded ? (
-              <>
-                <Check className="w-3.5 h-3.5" />
-                <span>В корзине</span>
-              </>
-            ) : (
-              <>
-                <ShoppingBag className="w-3.5 h-3.5" />
-                <span>В корзину</span>
-              </>
-            )}
-          </button>
+          {isAdmin ? (
+            <button
+              onClick={handleEditClick}
+              className="flex items-center justify-center gap-1 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-black transition-all active:scale-95 shadow-xs"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+              <span>Редактировать</span>
+            </button>
+          ) : user?.role === 'seller' ? (
+            <button
+              onClick={handleCardClick}
+              className="flex items-center justify-center gap-1 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gray-100 dark:bg-[#1a1a1a] text-gray-800 dark:text-gray-200 hover:bg-gray-200 transition-all active:scale-95 shadow-xs"
+            >
+              <span>Подробнее</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleAddToCart}
+              disabled={isOutOfStock}
+              className={`flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                isOutOfStock
+                  ? 'bg-gray-100 dark:bg-[#111111] text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                  : isAdded
+                  ? 'bg-gray-900 dark:bg-white text-white dark:text-black'
+                  : 'bg-[#F14635] hover:bg-[#E03221] active:scale-95 text-white shadow-xs'
+              }`}
+            >
+              {isAdded ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>В корзине</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <span>В корзину</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>

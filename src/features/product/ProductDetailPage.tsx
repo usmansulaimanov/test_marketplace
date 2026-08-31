@@ -245,51 +245,78 @@ export const ProductDetailPage: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="space-y-4 pt-4">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={handleAddToCart}
-                disabled={isOutOfStock}
-                className={`flex-1 py-4 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm ${
-                  isOutOfStock
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : isAdded
-                    ? 'bg-gray-900 text-white'
-                    : 'bg-[#F14635] hover:bg-[#E03221] text-white'
-                }`}
-              >
-                {isAdded ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    <span>Добавлено в корзину</span>
-                  </>
-                ) : (
-                  <>
-                    <ShoppingBag className="w-4 h-4" />
-                    <span>В корзину</span>
-                  </>
-                )}
-              </button>
+            {user?.role === 'admin' ? (
+              <div className="flex gap-3">
+                <Link
+                  to={`/product/${product.id}/edit`}
+                  className="flex-1 bg-[#F14635] hover:bg-[#E03221] text-white py-4 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-xs"
+                >
+                  <Edit3 className="w-4 h-4" />
+                  <span>Редактировать товар (Админ)</span>
+                </Link>
+                <Link
+                  to="/admin?tab=inventory"
+                  className="px-6 py-4 rounded-2xl border border-gray-200 dark:border-neutral-800 text-xs font-bold hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-all"
+                >
+                  Склад
+                </Link>
+              </div>
+            ) : user?.role === 'seller' ? (
+              <div className="flex gap-3">
+                <Link
+                  to="/seller/products"
+                  className="flex-1 bg-[#F14635] hover:bg-[#E03221] text-white py-4 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-xs"
+                >
+                  <span>Перейти в кабинет продавца</span>
+                </Link>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={handleAddToCart}
+                  disabled={isOutOfStock}
+                  className={`flex-1 py-4 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm ${
+                    isOutOfStock
+                      ? 'bg-gray-100 dark:bg-[#111111] text-gray-400 cursor-not-allowed'
+                      : isAdded
+                      ? 'bg-gray-900 dark:bg-white text-white dark:text-black'
+                      : 'bg-[#F14635] hover:bg-[#E03221] text-white'
+                  }`}
+                >
+                  {isAdded ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>Добавлено в корзину</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag className="w-4 h-4" />
+                      <span>В корзину</span>
+                    </>
+                  )}
+                </button>
 
-              <button
-                onClick={handleInstantBuy}
-                disabled={isOutOfStock}
-                className="flex-1 bg-gray-900 hover:bg-black text-white py-4 rounded-2xl text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50"
-              >
-                Купить сразу
-              </button>
+                <button
+                  onClick={handleInstantBuy}
+                  disabled={isOutOfStock}
+                  className="flex-1 bg-gray-900 hover:bg-black text-white py-4 rounded-2xl text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50"
+                >
+                  Купить сразу
+                </button>
 
-              <button
-                onClick={() => toggleWishlist(product)}
-                className={`p-4 rounded-2xl border transition-all active:scale-95 flex items-center justify-center ${
-                  isInWishlist(product.id)
-                    ? 'border-[#F14635] bg-[#FFF1F0] text-[#F14635]'
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-400'
-                }`}
-                title="В избранное"
-              >
-                <Heart className={`w-5 h-5 ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
-              </button>
-            </div>
+                <button
+                  onClick={() => toggleWishlist(product)}
+                  className={`p-4 rounded-2xl border transition-all active:scale-95 flex items-center justify-center ${
+                    isInWishlist(product.id)
+                      ? 'border-[#F14635] bg-[#FFF1F0] text-[#F14635]'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-400'
+                  }`}
+                  title="В избранное"
+                >
+                  <Heart className={`w-5 h-5 ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
+                </button>
+              </div>
+            )}
 
             {/* Guarantees */}
             <div className="grid grid-cols-3 gap-2 pt-2 text-[11px] text-gray-500">

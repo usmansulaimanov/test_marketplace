@@ -86,56 +86,57 @@ export const Header: React.FC = () => {
             </div>
           </form>
 
-          {/* Navigation Action Buttons */}
-          <div className="hidden lg:flex items-center gap-3">
-            {/* Theme Toggle */}
+          <div className="hidden lg:flex items-center gap-2">
+            {/* Theme Toggle Button */}
             <button
               type="button"
               onClick={toggleTheme}
-              className="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] rounded-xl transition-all cursor-pointer active:scale-95"
-              title={theme === 'dark' ? 'Включить светлую тему' : 'Включить тёмную тему'}
-              aria-label="Сменить тему оформления"
+              className="p-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1a1a1a] rounded-xl transition-colors cursor-pointer"
+              title={theme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}
             >
               {theme === 'dark' ? (
-                <Sun className="w-5 h-5 text-amber-400 hover:rotate-45 transition-transform duration-300" />
+                <Sun className="w-5 h-5 text-amber-400" />
               ) : (
-                <Moon className="w-5 h-5 text-gray-700 hover:-rotate-12 transition-transform duration-300" />
+                <Moon className="w-5 h-5 text-gray-600" />
               )}
             </button>
 
-            {/* Wishlist Link */}
-            <Link
-              to="/wishlist"
-              className="flex items-center gap-2 p-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-colors relative"
-              title="Избранное"
-            >
-              <Heart className="w-5 h-5" />
-              {wishlistItems.length > 0 && (
-                <span className="absolute -top-0 -right-0.5 bg-[#F14635] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                  {wishlistItems.length}
-                </span>
-              )}
-            </Link>
+            {/* Wishlist & Cart - ONLY for Client / Guest */}
+            {user?.role !== 'admin' && user?.role !== 'seller' && (
+              <>
+                <Link
+                  to="/wishlist"
+                  className="p-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1a1a1a] rounded-xl transition-colors relative"
+                  title="Избранное"
+                >
+                  <Heart className="w-5 h-5" />
+                  {wishlistItems.length > 0 && (
+                    <span className="absolute -top-0 -right-0.5 bg-[#F14635] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                      {wishlistItems.length}
+                    </span>
+                  )}
+                </Link>
 
-            {/* Cart Link */}
-            <Link
-              to="/cart"
-              className="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-colors relative"
-            >
-              <div className="relative">
-                <ShoppingBag className="w-5 h-5" />
-                {totalCartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-[#F14635] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                    {totalCartCount}
+                <Link
+                  to="/cart"
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-colors relative"
+                >
+                  <div className="relative">
+                    <ShoppingBag className="w-5 h-5" />
+                    {totalCartCount > 0 && (
+                      <span className="absolute -top-1.5 -right-2 bg-[#F14635] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                        {totalCartCount}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs font-bold text-gray-900 dark:text-white">
+                    {items.reduce((s, i) => s + i.product.price * i.quantity, 0).toLocaleString()} ₸
                   </span>
-                )}
-              </div>
-              <span className="text-xs font-bold text-gray-900 dark:text-white">
-                {items.reduce((s, i) => s + i.product.price * i.quantity, 0).toLocaleString()} ₸
-              </span>
-            </Link>
+                </Link>
+              </>
+            )}
 
-            {/* Profile / Admin Link */}
+            {/* Profile / Admin / Seller Link */}
             {isAuthenticated ? (
               <div className="flex items-center gap-1.5">
                 {user?.role === 'admin' ? (
@@ -145,6 +146,14 @@ export const Header: React.FC = () => {
                     className="p-2.5 rounded-xl bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] text-[#F14635] flex items-center justify-center transition-colors shadow-xs"
                   >
                     <ShieldCheck className="w-4 h-4" />
+                  </Link>
+                ) : user?.role === 'seller' ? (
+                  <Link
+                    to="/seller"
+                    title="Кабинет продавца"
+                    className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-white bg-[#F14635] hover:bg-[#E03221] transition-colors shadow-xs"
+                  >
+                    <span className="text-xs font-bold">Кабинет продавца</span>
                   </Link>
                 ) : (
                   <Link
@@ -164,7 +173,7 @@ export const Header: React.FC = () => {
                 <button
                   onClick={handleLogout}
                   title="Выйти из аккаунта"
-                  className="p-2 text-gray-400 hover:text-red-500 rounded-xl hover:bg-red-50 transition-colors"
+                  className="p-2 text-gray-400 hover:text-red-500 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
