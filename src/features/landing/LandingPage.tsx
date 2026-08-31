@@ -22,9 +22,6 @@ export const LandingPage: React.FC = () => {
       {/* Hero Seamless Section */}
       <section className="py-6 sm:py-10">
         <div className="max-w-4xl space-y-6">
-          <div className="inline-flex items-center gap-2 bg-gray-100 dark:bg-[#111111] text-gray-800 dark:text-gray-200 text-xs font-semibold px-3 py-1 rounded-full">
-            <span>Жаңа топтама 2026</span>
-          </div>
 
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-gray-900 dark:text-white leading-[1.1]">
             Заманауи киім & <br />
