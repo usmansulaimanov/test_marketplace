@@ -75,11 +75,8 @@ export const LandingPage: React.FC = () => {
 
       {/* 4 Main Categories Section */}
       <section className="space-y-6">
-        <div className="flex items-baseline justify-between">
-          <div>
-            <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Категории одежды</h2>
-            <p className="text-xs text-gray-500 mt-1">Таңдаулы бөлімдер бойынша жылдам өту</p>
-          </div>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Категории одежды</h2>
           <Link
             to="/catalog"
             className="text-xs font-bold text-[#F14635] hover:underline flex items-center gap-1"
@@ -116,11 +113,8 @@ export const LandingPage: React.FC = () => {
 
       {/* Featured / Popular Hits */}
       <section className="space-y-6">
-        <div className="flex items-baseline justify-between">
-          <div>
-            <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Хиты продаж</h2>
-            <p className="text-xs text-gray-500 mt-1">Ең көп сұранысқа ие заманауи киімдер</p>
-          </div>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Хиты продаж</h2>
           <Link
             to="/catalog"
             className="text-xs font-bold text-[#F14635] hover:underline flex items-center gap-1"
