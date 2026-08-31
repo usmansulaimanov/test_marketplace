@@ -8,7 +8,8 @@ import {
   LogOut,
   Heart,
   Sun,
-  Moon
+  Moon,
+  ShieldCheck
 } from 'lucide-react';
 import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -137,22 +138,28 @@ export const Header: React.FC = () => {
             {/* Profile / Admin Link */}
             {isAuthenticated ? (
               <div className="flex items-center gap-1.5">
-                <Link
-                  to={user?.role === 'admin' ? '/admin' : '/dashboard'}
-                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
-                >
-                  <div className="w-6 h-6 rounded-full bg-white dark:bg-[#222222] flex items-center justify-center text-gray-700 dark:text-gray-300 shadow-xs">
-                    <UserIcon className="w-3.5 h-3.5" />
-                  </div>
-                  <span className="text-xs font-semibold text-gray-900 dark:text-white">
-                    {user?.name}
-                  </span>
-                  {user?.role === 'admin' && (
-                    <span className="bg-[#FFF1F0] dark:bg-[#F14635]/20 text-[#F14635] text-[9px] font-black px-1.5 py-0.5 rounded">
-                      ADMIN
+                {user?.role === 'admin' ? (
+                  <Link
+                    to="/admin"
+                    title="Админ-панель"
+                    className="p-2.5 rounded-xl bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] text-[#F14635] flex items-center justify-center transition-colors shadow-xs"
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                  </Link>
+                ) : (
+                  <Link
+                    to="/dashboard"
+                    title="Личный кабинет"
+                    className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-white dark:bg-[#222222] flex items-center justify-center text-gray-700 dark:text-gray-300 shadow-xs">
+                      <UserIcon className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">
+                      {user?.name}
                     </span>
-                  )}
-                </Link>
+                  </Link>
+                )}
 
                 <button
                   onClick={handleLogout}
