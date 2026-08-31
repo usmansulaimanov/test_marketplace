@@ -34,7 +34,7 @@ export interface CartItem {
   selectedColor?: string;
 }
 
-export type Role = 'client' | 'admin';
+export type Role = 'client' | 'admin' | 'seller';
 
 export interface User {
   id: string;
@@ -43,6 +43,52 @@ export interface User {
   role: Role;
   balance: number;
   avatarUrl?: string;
+}
+
+export interface SellerProduct {
+  id: string;
+  title: string;
+  brand: string;
+  category: CategoryId;
+  price: number;
+  stock: number;
+  isActive: boolean;
+  imageUrl: string;
+  salesCount: number;
+  rating: number;
+  reviewsCount: number;
+  createdAt: string;
+}
+
+export type SellerOrderStatus = 'new' | 'processing' | 'shipped' | 'delivered';
+
+export interface SellerOrder {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  items: {
+    productId: string;
+    title: string;
+    price: number;
+    quantity: number;
+    size?: string;
+  }[];
+  totalAmount: number;
+  status: SellerOrderStatus;
+  date: string;
+  deliveryAddress: string;
+}
+
+export interface SellerMetrics {
+  totalRevenue: number;
+  totalOrders: number;
+  activeProductsCount: number;
+  rating: number;
+}
+
+export interface MonthlyRevenue {
+  month: string;
+  amount: number;
 }
 
 export interface OrderItem {

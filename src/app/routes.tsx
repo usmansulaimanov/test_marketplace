@@ -13,7 +13,43 @@ import { OrderSuccessPage } from '../features/checkout/OrderSuccessPage';
 import { WishlistPage } from '../features/wishlist/WishlistPage';
 import { NotFoundPage } from '../features/misc/NotFoundPage';
 
+// Seller Feature
+import { SellerLayout } from '../features/seller/SellerLayout';
+import { SellerDashboard } from '../features/seller/SellerDashboard';
+import { SellerProducts } from '../features/seller/SellerProducts';
+import { SellerOrders } from '../features/seller/SellerOrders';
+import { SellerAnalytics } from '../features/seller/SellerAnalytics';
+
 export const router = createBrowserRouter([
+  // B2B Seller Space (Isolated with SellerLayout)
+  {
+    path: '/seller',
+    element: (
+      <ProtectedRoute allowedRoles={['seller']}>
+        <SellerLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <SellerDashboard />,
+      },
+      {
+        path: 'products',
+        element: <SellerProducts />,
+      },
+      {
+        path: 'orders',
+        element: <SellerOrders />,
+      },
+      {
+        path: 'analytics',
+        element: <SellerAnalytics />,
+      },
+    ],
+  },
+
+  // Main Marketplace Space (with Consumer Header & Footer)
   {
     path: '/',
     element: <Layout />,
@@ -44,7 +80,7 @@ export const router = createBrowserRouter([
       },
       {
         // Protected Admin Routes
-        element: <ProtectedRoute allowedRole="admin" />,
+        element: <ProtectedRoute allowedRoles={['admin']} />,
         children: [
           {
             path: 'admin',
@@ -54,11 +90,11 @@ export const router = createBrowserRouter([
             path: 'product/:id/edit',
             element: <ProductEditPage />,
           },
-        ]
+        ],
       },
       {
         // Protected Client Routes
-        element: <ProtectedRoute />,
+        element: <ProtectedRoute allowedRoles={['client', 'admin']} />,
         children: [
           {
             path: 'dashboard',
@@ -68,7 +104,7 @@ export const router = createBrowserRouter([
             path: 'order-success/:id',
             element: <OrderSuccessPage />,
           },
-        ]
+        ],
       },
       {
         path: '*',

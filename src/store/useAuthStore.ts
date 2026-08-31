@@ -23,15 +23,24 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: DEFAULT_USER,
       isAuthenticated: true,
-      login: (email, role = 'client', name = 'Клиент') => {
+      login: (email, role = 'client', name) => {
+        let defaultName = name;
+        if (!defaultName) {
+          if (role === 'admin') defaultName = 'Администратор Маркета';
+          else if (role === 'seller') defaultName = 'Магазин «Exclusive Wear»';
+          else defaultName = 'Клиент';
+        }
+
+        const initialBalance = role === 'admin' ? 500000 : role === 'seller' ? 320000 : 150000;
+
         set({
           isAuthenticated: true,
           user: {
             id: `usr-${Date.now()}`,
-            name: role === 'admin' ? 'Администратор Маркета' : name,
+            name: defaultName,
             email,
             role,
-            balance: role === 'admin' ? 500000 : 150000,
+            balance: initialBalance,
           },
         });
       },
