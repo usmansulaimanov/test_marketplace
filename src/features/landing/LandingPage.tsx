@@ -124,14 +124,21 @@ export const LandingPage: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {hitProducts.map((product) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-            />
-          ))}
-        </div>
+        {hitProducts.length === 0 ? (
+          <div className="bg-gray-50 dark:bg-[#111111] p-12 rounded-3xl text-center space-y-2">
+            <h4 className="font-bold text-sm text-gray-900 dark:text-white">Товары скоро появятся</h4>
+            <p className="text-xs text-gray-400">Каталог обновляется, добавьте первые товары через панель продавца или администратора</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {hitProducts.map((product) => (
+              <ProductCard 
+                key={product.id} 
+                product={product} 
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Value Proposition Seamless Section */}

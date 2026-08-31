@@ -68,7 +68,7 @@ export const useProductStore = create<ProductState>()(
       },
     }),
     {
-      name: 'kitap-products-store-v3',
+      name: 'kitap-products-store-v4',
     }
   )
 );

@@ -25,7 +25,12 @@ export const SellerDashboard: React.FC = () => {
   const recentOrders = orders.slice(0, 5);
   const topProducts = [...products].sort((a, b) => b.salesCount - a.salesCount).slice(0, 5);
 
-  const maxRevenue = Math.max(...monthlyRevenue.map((m) => m.amount), 1);
+  const monthsList = ['Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август'];
+  const displayRevenue = monthlyRevenue.length > 0
+    ? monthlyRevenue
+    : monthsList.map((m) => ({ month: m, amount: 0 }));
+
+  const maxRevenue = Math.max(...displayRevenue.map((m) => m.amount), 1);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -161,17 +166,17 @@ export const SellerDashboard: React.FC = () => {
 
         {/* Minimalist Bar Chart in Kaspi Style */}
         <div className="grid grid-cols-6 gap-2 sm:gap-4 items-end h-44 pt-6 pb-2">
-          {monthlyRevenue.map((item) => {
-            const heightPercent = Math.round((item.amount / maxRevenue) * 100);
+          {displayRevenue.map((item) => {
+            const heightPercent = item.amount > 0 ? Math.round((item.amount / maxRevenue) * 100) : 4;
             return (
               <div key={item.month} className="flex flex-col items-center gap-2 h-full justify-end group">
                 <span className="text-[10px] font-bold text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                  {(item.amount / 1000).toFixed(0)}k
+                  {item.amount > 0 ? `${(item.amount / 1000).toFixed(0)}k` : '0₸'}
                 </span>
                 <div className="w-full bg-white dark:bg-[#1a1a1a] rounded-xl h-full flex items-end p-1 shadow-xs">
                   <div
                     style={{ height: `${heightPercent}%` }}
-                    className="w-full bg-neutral-900 dark:bg-white group-hover:bg-[#F14635] dark:group-hover:bg-[#F14635] rounded-lg transition-all duration-300"
+                    className="w-full bg-orange-500 dark:bg-white group-hover:bg-orange-600 dark:group-hover:bg-orange-400 rounded-lg transition-all duration-300"
                   />
                 </div>
                 <span className="text-[11px] font-bold text-gray-500 truncate">{item.month}</span>

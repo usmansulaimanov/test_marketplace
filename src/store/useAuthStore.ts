@@ -10,28 +10,18 @@ interface AuthState {
   updateBalance: (delta: number) => void;
 }
 
-const DEFAULT_USER: User = {
-  id: 'usr-1',
-  name: 'Усман С.',
-  email: 'usman@kitapall.kz',
-  role: 'client',
-  balance: 150000,
-};
-
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      user: DEFAULT_USER,
-      isAuthenticated: true,
+      user: null,
+      isAuthenticated: false,
       login: (email, role = 'client', name) => {
         let defaultName = name;
         if (!defaultName) {
           if (role === 'admin') defaultName = 'Администратор Маркета';
-          else if (role === 'seller') defaultName = 'Магазин «Exclusive Wear»';
+          else if (role === 'seller') defaultName = 'Магазин';
           else defaultName = 'Клиент';
         }
-
-        const initialBalance = role === 'admin' ? 500000 : role === 'seller' ? 320000 : 150000;
 
         set({
           isAuthenticated: true,
@@ -40,7 +30,7 @@ export const useAuthStore = create<AuthState>()(
             name: defaultName,
             email,
             role,
-            balance: initialBalance,
+            balance: 0,
           },
         });
       },
@@ -63,7 +53,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: 'kitap-auth-store',
+      name: 'kitap-auth-store-v2',
     }
   )
 );

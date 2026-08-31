@@ -9,6 +9,11 @@ export const SellerAnalytics: React.FC = () => {
   const totalSalesUnits = products.reduce((s, p) => s + p.salesCount, 0);
   const avgCheck = orders.length > 0 ? Math.round(totalRevenue / orders.length) : 0;
 
+  const monthsList = ['Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август'];
+  const displayRevenue = monthlyRevenue.length > 0
+    ? monthlyRevenue
+    : monthsList.map((m) => ({ month: m, amount: 0 }));
+
   // Category sales breakdown
   const categoryStats = [
     { name: 'Головные уборы', category: 'headwear', color: 'bg-[#F14635]' },
@@ -133,8 +138,8 @@ export const SellerAnalytics: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 dark:divide-neutral-800/60 font-medium">
-              {monthlyRevenue.map((row, i) => {
-                const prev = i > 0 ? monthlyRevenue[i - 1].amount : row.amount;
+              {displayRevenue.map((row, i) => {
+                const prev = i > 0 ? displayRevenue[i - 1].amount : row.amount;
                 const growth = prev > 0 ? Math.round(((row.amount - prev) / prev) * 100) : 0;
                 return (
                   <tr key={row.month} className="hover:bg-gray-50/50 dark:hover:bg-[#161616]/50">
@@ -150,8 +155,12 @@ export const SellerAnalytics: React.FC = () => {
                       </span>
                     </td>
                     <td className="py-3.5 px-4 text-right">
-                      <span className="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-md">
-                        Выполнен
+                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md ${
+                        row.amount > 0 
+                          ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' 
+                          : 'bg-gray-100 dark:bg-[#222222] text-gray-400'
+                      }`}>
+                        {row.amount > 0 ? 'Выполнен' : 'Нет данных'}
                       </span>
                     </td>
                   </tr>
