@@ -47,9 +47,6 @@ export const Footer: React.FC = () => {
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
           <p>© 2026 KitapAll Marketplace. Барлық құқықтар қорғалған.</p>
-          <p className="flex items-center gap-4">
-            <span>React + TypeScript + Vite + Tailwind CSS</span>
-          </p>
         </div>
       </div>
     </footer>
