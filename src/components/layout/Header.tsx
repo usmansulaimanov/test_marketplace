@@ -6,7 +6,6 @@ import {
   User as UserIcon, 
   Menu, 
   LogOut,
-  LayoutGrid,
   Heart,
   Sun,
   Moon
@@ -61,14 +60,6 @@ export const Header: React.FC = () => {
               <span className="font-black text-xl md:text-2xl tracking-tighter text-gray-900 dark:text-white uppercase">
                 KITAP<span className="text-[#F14635]">ALL</span>
               </span>
-            </Link>
-
-            <Link
-              to="/catalog"
-              className="hidden sm:flex items-center gap-2 bg-[#F14635] hover:bg-[#E03221] text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-xs"
-            >
-              <LayoutGrid className="w-4 h-4" />
-              <span>Каталог</span>
             </Link>
           </div>
 

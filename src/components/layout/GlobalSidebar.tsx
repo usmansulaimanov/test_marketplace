@@ -79,10 +79,15 @@ export const GlobalSidebar: React.FC = () => {
               <Link
                 to="/catalog"
                 onClick={closeSidebar}
-                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-[#1a1a1a] shadow-xs hover:text-gray-900 dark:hover:text-white"
+                className="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-[#1a1a1a] shadow-xs hover:text-gray-900 dark:hover:text-white"
               >
-                <LayoutGrid className="w-4 h-4 text-[#F14635]" />
-                <span>Каталог товаров</span>
+                <div className="flex items-center gap-3">
+                  <LayoutGrid className="w-4 h-4 text-[#F14635]" />
+                  <span>Каталог товаров</span>
+                </div>
+                <span className="text-[10px] font-bold text-white bg-[#F14635] px-2 py-0.5 rounded-full">
+                  Все
+                </span>
               </Link>
               <Link
                 to="/wishlist"
@@ -119,6 +124,31 @@ export const GlobalSidebar: React.FC = () => {
                 </span>
               </button>
             </nav>
+
+            {/* Catalog Categories */}
+            <div className="space-y-2">
+              <h3 className="px-2 text-[10px] font-black text-gray-400 uppercase tracking-wider">
+                Категории каталога
+              </h3>
+              <nav className="bg-gray-50 dark:bg-[#111111]/50 rounded-3xl p-2 space-y-1 text-xs font-bold">
+                {[
+                  { id: 'headwear', name: 'Головные уборы', count: 'Кепки, шапки' },
+                  { id: 'tops', name: 'Верхняя одежда', count: 'Худи, футболки' },
+                  { id: 'bottoms', name: 'Брюки и джинсы', count: 'Карго, деним' },
+                  { id: 'footwear', name: 'Обувь', count: 'Кроссовки, кеды' },
+                ].map((cat) => (
+                  <Link
+                    key={cat.id}
+                    to={`/catalog?cat=${cat.id}`}
+                    onClick={closeSidebar}
+                    className="w-full flex items-center justify-between px-4 py-2.5 rounded-2xl transition-all text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-[#1a1a1a] hover:text-gray-900 dark:hover:text-white"
+                  >
+                    <span>{cat.name}</span>
+                    <span className="text-[10px] font-normal text-gray-400">{cat.count}</span>
+                  </Link>
+                ))}
+              </nav>
+            </div>
 
             {/* Dashboard / Admin Links based on Role */}
             {isAuthenticated ? (
