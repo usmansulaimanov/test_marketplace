@@ -20,6 +20,7 @@ import { useProductStore } from '../../store/useProductStore';
 import { useOrderStore } from '../../store/useOrderStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useToastStore } from '../../store/useToastStore';
+import { SafeImage } from '../../components/ui/SafeImage';
 
 import { CategoryId } from '../../types';
 import { CATEGORIES } from '../../data/mockProducts';
@@ -373,7 +374,7 @@ export const AdminDashboardPage: React.FC = () => {
                         {/* Product */}
                         <td className="py-3 px-3">
                           <div className="flex items-center gap-3">
-                            <img
+                            <SafeImage
                               src={p.imageUrl}
                               alt={p.title}
                               className="w-10 h-12 object-cover rounded-xl bg-white shadow-xs shrink-0"
@@ -519,7 +520,7 @@ export const AdminDashboardPage: React.FC = () => {
                           key={idx}
                           className="flex items-center gap-3 bg-white p-3 rounded-2xl shadow-xs"
                         >
-                          <img
+                          <SafeImage
                             src={item.imageUrl}
                             alt={item.title}
                             className="w-12 h-14 object-cover rounded-xl bg-gray-50 shrink-0"

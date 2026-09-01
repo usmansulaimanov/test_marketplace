@@ -16,6 +16,7 @@ import { useProductStore } from '../../store/useProductStore';
 import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useToastStore } from '../../store/useToastStore';
+import { SafeImage } from '../../components/ui/SafeImage';
 import { useWishlistStore } from '../../store/useWishlistStore';
 import { ProductCard } from '../../components/product/ProductCard';
 
@@ -110,8 +111,8 @@ export const ProductDetailPage: React.FC = () => {
       {/* Main Product Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
         {/* Left: Product Image */}
-        <div className="relative aspect-[4/5] bg-gray-50 rounded-3xl overflow-hidden shadow-xs">
-          <img
+        <div className="relative aspect-[4/5] bg-gray-50 dark:bg-[#111111] rounded-3xl overflow-hidden shadow-xs">
+          <SafeImage
             src={product.imageUrl}
             alt={product.title}
             className="w-full h-full object-cover object-center"

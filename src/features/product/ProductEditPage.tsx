@@ -12,6 +12,7 @@ import {
 import { useProductStore } from '../../store/useProductStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useToastStore } from '../../store/useToastStore';
+import { SafeImage } from '../../components/ui/SafeImage';
 import { CategoryId } from '../../types';
 import { CATEGORIES } from '../../data/mockProducts';
 
@@ -331,13 +332,10 @@ export const ProductEditPage: React.FC = () => {
             {/* Live Preview */}
             <div className="aspect-[4/5] bg-white rounded-2xl overflow-hidden shadow-xs relative flex items-center justify-center">
               {imageUrl ? (
-                <img
+                <SafeImage
                   src={imageUrl}
                   alt="Превью"
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600';
-                  }}
                 />
               ) : (
                 <div className="text-gray-400 flex flex-col items-center gap-2">

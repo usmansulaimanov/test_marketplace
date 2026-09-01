@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useSellerStore } from '../../store/useSellerStore';
 import { useAuthStore } from '../../store/useAuthStore';
+import { SafeImage } from '../../components/ui/SafeImage';
 
 export const SellerDashboard: React.FC = () => {
   const { user } = useAuthStore();
@@ -252,7 +253,7 @@ export const SellerDashboard: React.FC = () => {
                 className="bg-white dark:bg-[#161616] p-3 rounded-2xl flex items-center justify-between gap-3 shadow-xs border border-transparent dark:border-neutral-800/60"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <img
+                  <SafeImage
                     src={product.imageUrl}
                     alt={product.title}
                     className="w-11 h-11 object-cover rounded-xl shrink-0 bg-gray-100 dark:bg-[#111111]"

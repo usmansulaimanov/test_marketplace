@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useSellerStore } from '../../store/useSellerStore';
 import { useToastStore } from '../../store/useToastStore';
+import { SafeImage } from '../../components/ui/SafeImage';
 import { CategoryId } from '../../types';
 import { CATEGORIES } from '../../data/mockProducts';
 
@@ -189,7 +190,7 @@ export const SellerProducts: React.FC = () => {
                     {/* Title & Image */}
                     <td className="py-3.5 px-5">
                       <div className="flex items-center gap-3">
-                        <img
+                        <SafeImage
                           src={product.imageUrl}
                           alt={product.title}
                           className="w-12 h-12 rounded-xl object-cover bg-gray-100 dark:bg-[#222222] shrink-0"

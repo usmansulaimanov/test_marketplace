@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingBag, Star, Edit3, Heart, Check } from 'lucide-react';
 import { Product } from '../../types';
+import { SafeImage } from '../ui/SafeImage';
 import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useWishlistStore } from '../../store/useWishlistStore';
@@ -62,7 +63,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     >
       {/* Image container */}
       <div className="relative aspect-[4/5] bg-gray-50 dark:bg-[#111111] rounded-2xl overflow-hidden mb-3">
-        <img
+        <SafeImage
           src={product.imageUrl}
           alt={product.title}
           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"

@@ -10,6 +10,7 @@ import {
   Zap, 
   Package 
 } from 'lucide-react';
+import { SafeImage } from '../ui/SafeImage';
 import { Product } from '../../types';
 import { useCartStore } from '../../store/useCartStore';
 import { useToastStore } from '../../store/useToastStore';
@@ -78,7 +79,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
 
         {/* Left: Big Product Image */}
         <div className="md:w-1/2 bg-gray-50 relative aspect-square md:aspect-auto">
-          <img
+          <SafeImage
             src={product.imageUrl}
             alt={product.title}
             className="w-full h-full object-cover object-center"

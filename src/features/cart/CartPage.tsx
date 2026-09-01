@@ -10,6 +10,7 @@ import {
   MapPin,
   ShieldCheck
 } from 'lucide-react';
+import { SafeImage } from '../../components/ui/SafeImage';
 import { useCartStore } from '../../store/useCartStore';
 import { useOrderStore } from '../../store/useOrderStore';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -86,10 +87,10 @@ export const CartPage: React.FC = () => {
             >
               {/* Product Image */}
               <Link to={`/product/${item.product.id}`} className="shrink-0 relative overflow-hidden rounded-2xl">
-                <img
+                <SafeImage
                   src={item.product.imageUrl}
                   alt={item.product.title}
-                  className="w-20 h-24 object-cover object-center bg-white group-hover:scale-105 transition-transform duration-300"
+                  className="w-20 h-24 object-cover object-center bg-white dark:bg-[#161616] group-hover:scale-105 transition-transform duration-300"
                 />
               </Link>
 

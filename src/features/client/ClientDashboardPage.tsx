@@ -15,6 +15,7 @@ import {
 import { useAuthStore } from '../../store/useAuthStore';
 import { useOrderStore } from '../../store/useOrderStore';
 import { Modal } from '../../components/ui/Modal';
+import { SafeImage } from '../../components/ui/SafeImage';
 import { Order } from '../../types';
 
 type ClientTab = 'overview' | 'orders' | 'profile';
@@ -250,7 +251,7 @@ export const ClientDashboardPage: React.FC = () => {
                           key={idx}
                           className="flex items-center gap-3 bg-white dark:bg-[#161616] p-3 rounded-2xl shadow-xs"
                         >
-                          <img
+                          <SafeImage
                             src={item.imageUrl}
                             alt={item.title}
                             className="w-12 h-14 object-cover rounded-xl bg-gray-50 dark:bg-[#222222] shrink-0"

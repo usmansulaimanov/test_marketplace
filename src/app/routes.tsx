@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createHashRouter } from 'react-router-dom';
 import { Layout } from '../components/layout/Layout';
 import { ProtectedRoute } from '../components/layout/ProtectedRoute';
 import { LandingPage } from '../features/landing/LandingPage';
@@ -20,7 +20,7 @@ import { SellerProducts } from '../features/seller/SellerProducts';
 import { SellerOrders } from '../features/seller/SellerOrders';
 import { SellerAnalytics } from '../features/seller/SellerAnalytics';
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   // B2B Seller Space (Isolated with SellerLayout)
   {
     path: '/seller',
