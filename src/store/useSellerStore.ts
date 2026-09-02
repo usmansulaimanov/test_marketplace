@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { SellerProduct, SellerOrder, SellerOrderStatus, MonthlyRevenue } from '../types';
+import { sanitizePrice, sanitizeStock, sanitizeInput, sanitizeUrl } from '../utils/security';
 
 interface SellerState {
   products: SellerProduct[];
@@ -41,6 +42,11 @@ export const useSellerStore = create<SellerState>()(
         const product: SellerProduct = {
           ...newProduct,
           id: `sp-${Date.now()}`,
+          title: sanitizeInput(newProduct.title),
+          brand: sanitizeInput(newProduct.brand),
+          price: sanitizePrice(newProduct.price),
+          stock: sanitizeStock(newProduct.stock),
+          imageUrl: sanitizeUrl(newProduct.imageUrl, 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=80'),
           salesCount: 0,
           rating: 0.0,
           reviewsCount: 0,
@@ -52,9 +58,10 @@ export const useSellerStore = create<SellerState>()(
       },
 
       updateStock: (id, newStock) => {
+        const safeStock = sanitizeStock(newStock);
         set((state) => ({
           products: state.products.map((p) =>
-            p.id === id ? { ...p, stock: Math.max(0, newStock) } : p
+            p.id === id ? { ...p, stock: safeStock } : p
           ),
         }));
       },

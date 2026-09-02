@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Product, CartItem } from '../types';
+import { sanitizePrice, sanitizeStock } from '../utils/security';
 
 interface CartState {
   items: CartItem[];
@@ -27,10 +28,14 @@ export const useCartStore = create<CartState>()(
           );
 
           if (existingIndex > -1) {
+            const currentQuantity = state.items[existingIndex].quantity;
+            const maxAvailableStock = Math.max(1, sanitizeStock(product.stock, 99));
+            const newQuantity = Math.min(currentQuantity + 1, maxAvailableStock);
+
             const updated = [...state.items];
             updated[existingIndex] = {
               ...updated[existingIndex],
-              quantity: updated[existingIndex].quantity + 1,
+              quantity: newQuantity,
             };
             return { items: updated };
           }
@@ -62,10 +67,14 @@ export const useCartStore = create<CartState>()(
       },
 
       updateQuantity: (productId, quantity, selectedSize) => {
-        if (quantity <= 0) {
+        const safeQuantity = sanitizeStock(quantity, 0);
+
+        if (safeQuantity <= 0) {
           get().removeItem(productId, selectedSize);
           return;
         }
+
+        const clampedQuantity = Math.min(99, safeQuantity);
 
         set((state) => ({
           items: state.items.map((item) => {
@@ -73,7 +82,7 @@ export const useCartStore = create<CartState>()(
               item.product.id === productId &&
               (!selectedSize || item.selectedSize === selectedSize)
             ) {
-              return { ...item, quantity };
+              return { ...item, quantity: clampedQuantity };
             }
             return item;
           }),
@@ -84,13 +93,13 @@ export const useCartStore = create<CartState>()(
 
       getTotalPrice: () => {
         return get().items.reduce(
-          (sum, item) => sum + item.product.price * item.quantity,
+          (sum, item) => sum + sanitizePrice(item.product.price) * sanitizeStock(item.quantity, 1),
           0
         );
       },
 
       getTotalItems: () => {
-        return get().items.reduce((sum, item) => sum + item.quantity, 0);
+        return get().items.reduce((sum, item) => sum + sanitizeStock(item.quantity, 1), 0);
       },
     }),
     {

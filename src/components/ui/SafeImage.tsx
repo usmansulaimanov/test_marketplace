@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shirt } from 'lucide-react';
+import { sanitizeUrl } from '../../utils/security';
 
 interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackSrc?: string;
@@ -21,6 +22,8 @@ export const SafeImage: React.FC<SafeImageProps> = ({
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const safeSrc = sanitizeUrl(src, '');
+
   useEffect(() => {
     setHasError(false);
     setIsLoading(true);
@@ -35,11 +38,12 @@ export const SafeImage: React.FC<SafeImageProps> = ({
     setIsLoading(false);
   };
 
-  if (!src || hasError) {
+  if (!safeSrc || hasError) {
     return (
       <div
         className={`flex flex-col items-center justify-center bg-gray-100 dark:bg-[#161616] text-gray-400 dark:text-gray-600 select-none ${className} ${containerClassName}`}
         title="Изображение недоступно"
+        data-testid="safe-image-placeholder"
       >
         <Shirt className="w-8 h-8 opacity-40 mb-1" />
         <span className="text-[10px] font-bold uppercase tracking-wider opacity-60">
@@ -51,7 +55,7 @@ export const SafeImage: React.FC<SafeImageProps> = ({
 
   return (
     <img
-      src={src}
+      src={safeSrc}
       alt={alt}
       onError={handleError}
       onLoad={handleLoad}
