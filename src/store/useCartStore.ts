@@ -94,7 +94,7 @@ export const useCartStore = create<CartState>()(
       },
     }),
     {
-      name: 'kitap-cart-store',
+      name: 'kitap-cart-store-v2',
     }
   )
 );
