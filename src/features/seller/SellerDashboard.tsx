@@ -16,8 +16,10 @@ import {
 import { useSellerStore } from '../../store/useSellerStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { SafeImage } from '../../components/ui/SafeImage';
+import { useT } from '../../i18n/useT';
 
 export const SellerDashboard: React.FC = () => {
+  const { t, language } = useT();
   const { user } = useAuthStore();
   const { products, orders, monthlyRevenue, toggleProductActive } = useSellerStore();
 
@@ -26,7 +28,10 @@ export const SellerDashboard: React.FC = () => {
   const recentOrders = orders.slice(0, 5);
   const topProducts = [...products].sort((a, b) => b.salesCount - a.salesCount).slice(0, 5);
 
-  const monthsList = ['Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август'];
+  const monthsList = language === 'kk'
+    ? ['Наурыз', 'Сәуір', 'Мамыр', 'Маусым', 'Шілде', 'Тамыз']
+    : ['Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август'];
+
   const displayRevenue = monthlyRevenue.length > 0
     ? monthlyRevenue
     : monthsList.map((m) => ({ month: m, amount: 0 }));
@@ -38,25 +43,25 @@ export const SellerDashboard: React.FC = () => {
       case 'new':
         return (
           <span className="inline-flex items-center gap-1 bg-[#FFF1F0] dark:bg-[#F14635]/20 text-[#F14635] text-[10px] font-bold px-2 py-0.5 rounded-md">
-            <Clock className="w-3 h-3" /> Новый
+            <Clock className="w-3 h-3" /> {t.seller.orderStatuses.new}
           </span>
         );
       case 'processing':
         return (
           <span className="inline-flex items-center gap-1 bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-md">
-            <Boxes className="w-3 h-3" /> В сборке
+            <Boxes className="w-3 h-3" /> {t.seller.orderStatuses.processing}
           </span>
         );
       case 'shipped':
         return (
           <span className="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-md">
-            <Truck className="w-3 h-3" /> В пути
+            <Truck className="w-3 h-3" /> {t.seller.orderStatuses.shipped}
           </span>
         );
       case 'delivered':
         return (
           <span className="inline-flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-md">
-            <PackageCheck className="w-3 h-3" /> Доставлен
+            <PackageCheck className="w-3 h-3" /> {t.seller.orderStatuses.delivered}
           </span>
         );
       default:
@@ -70,10 +75,10 @@ export const SellerDashboard: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
-            Сводка продавца
+            {t.seller.title}
           </h1>
           <p className="text-xs text-gray-400 mt-1">
-            Магазин: <span className="font-bold text-gray-900 dark:text-white">{user?.name}</span>
+            {t.seller.shopLabel} <span className="font-bold text-gray-900 dark:text-white">{user?.name}</span>
           </p>
         </div>
 
@@ -82,7 +87,7 @@ export const SellerDashboard: React.FC = () => {
           className="inline-flex items-center gap-2 bg-[#F14635] hover:bg-[#E03221] text-white px-5 py-2.5 rounded-2xl font-bold text-xs transition-all shadow-xs active:scale-95"
         >
           <Plus className="w-4 h-4" />
-          <span>Добавить товар</span>
+          <span>{t.seller.addProductBtn}</span>
         </Link>
       </div>
 
@@ -90,7 +95,7 @@ export const SellerDashboard: React.FC = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-gray-50 dark:bg-[#111111] p-5 rounded-3xl space-y-2">
           <div className="flex items-center justify-between text-gray-400">
-            <span className="text-xs font-semibold">Общая выручка</span>
+            <span className="text-xs font-semibold">{t.seller.kpi.totalRevenue}</span>
             <div className="p-2 bg-white dark:bg-[#1a1a1a] text-[#F14635] rounded-xl shadow-xs">
               <TrendingUp className="w-4 h-4" />
             </div>
@@ -99,13 +104,13 @@ export const SellerDashboard: React.FC = () => {
             {totalRevenue.toLocaleString()} ₸
           </h3>
           <span className="text-[10px] text-gray-400 font-medium block">
-            {orders.length > 0 ? 'За все время' : 'Нет продаж'}
+            {orders.length > 0 ? t.seller.kpi.allTime : t.seller.kpi.noSales}
           </span>
         </div>
 
         <div className="bg-gray-50 dark:bg-[#111111] p-5 rounded-3xl space-y-2">
           <div className="flex items-center justify-between text-gray-400">
-            <span className="text-xs font-semibold">Всего заказов</span>
+            <span className="text-xs font-semibold">{t.seller.kpi.totalOrders}</span>
             <div className="p-2 bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl shadow-xs">
               <ShoppingBag className="w-4 h-4" />
             </div>
@@ -114,13 +119,13 @@ export const SellerDashboard: React.FC = () => {
             {orders.length}
           </h3>
           <span className="text-[10px] text-gray-400 font-medium block">
-            {orders.filter((o) => o.status === 'new').length} новых к обработке
+            {t.seller.kpi.newOrdersToProcess(orders.filter((o) => o.status === 'new').length)}
           </span>
         </div>
 
         <div className="bg-gray-50 dark:bg-[#111111] p-5 rounded-3xl space-y-2">
           <div className="flex items-center justify-between text-gray-400">
-            <span className="text-xs font-semibold">Активных товаров</span>
+            <span className="text-xs font-semibold">{t.seller.kpi.activeProducts}</span>
             <div className="p-2 bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white rounded-xl shadow-xs">
               <Boxes className="w-4 h-4" />
             </div>
@@ -129,13 +134,13 @@ export const SellerDashboard: React.FC = () => {
             {activeProducts} / {products.length}
           </h3>
           <span className="text-[10px] text-gray-400 font-medium block">
-            В каталоге маркетплейса
+            {t.seller.kpi.inCatalog}
           </span>
         </div>
 
         <div className="bg-gray-50 dark:bg-[#111111] p-5 rounded-3xl space-y-2">
           <div className="flex items-center justify-between text-gray-400">
-            <span className="text-xs font-semibold">Рейтинг магазина</span>
+            <span className="text-xs font-semibold">{t.seller.kpi.storeRating}</span>
             <div className="p-2 bg-white dark:bg-[#1a1a1a] text-amber-500 rounded-xl shadow-xs">
               <Star className="w-4 h-4 fill-current" />
             </div>
@@ -144,7 +149,7 @@ export const SellerDashboard: React.FC = () => {
             0.0 <span className="text-xs text-gray-400 font-medium">/ 5.0</span>
           </h3>
           <span className="text-[10px] text-gray-400 font-medium block">
-            Нет отзывов
+            {t.seller.kpi.noReviews}
           </span>
         </div>
       </div>
@@ -153,14 +158,14 @@ export const SellerDashboard: React.FC = () => {
       <div className="bg-gray-50 dark:bg-[#111111] p-6 sm:p-7 rounded-3xl space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-black text-base text-gray-900 dark:text-white">Динамика продаж</h3>
-            <p className="text-xs text-gray-400 mt-0.5">Помесячный объем реализованной продукции</p>
+            <h3 className="font-black text-base text-gray-900 dark:text-white">{t.seller.salesTrend}</h3>
+            <p className="text-xs text-gray-400 mt-0.5">{t.seller.salesTrendSub}</p>
           </div>
           <Link
             to="/seller/analytics"
             className="text-xs font-bold text-[#F14635] hover:underline flex items-center gap-1"
           >
-            <span>Вся аналитика</span>
+            <span>{t.seller.viewAllAnalytics}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -192,12 +197,12 @@ export const SellerDashboard: React.FC = () => {
         {/* Recent Orders */}
         <div className="bg-gray-50 dark:bg-[#111111] p-6 rounded-3xl space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-black text-base text-gray-900 dark:text-white">Новые заказы</h3>
+            <h3 className="font-black text-base text-gray-900 dark:text-white">{language === 'kk' ? 'Жаңа тапсырыстар' : 'Новые заказы'}</h3>
             <Link
               to="/seller/orders"
               className="text-xs font-bold text-[#F14635] hover:underline flex items-center gap-1"
             >
-              <span>Все ({orders.length})</span>
+              <span>{language === 'kk' ? 'Барлығы' : 'Все'} ({orders.length})</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -225,7 +230,7 @@ export const SellerDashboard: React.FC = () => {
                     {order.totalAmount.toLocaleString()} ₸
                   </span>
                   <span className="text-[10px] text-gray-400">
-                    {order.items.reduce((s, i) => s + i.quantity, 0)} шт.
+                    {order.items.reduce((s, i) => s + i.quantity, 0)} {t.common.units}
                   </span>
                 </div>
               </div>
@@ -236,12 +241,12 @@ export const SellerDashboard: React.FC = () => {
         {/* Top Products */}
         <div className="bg-gray-50 dark:bg-[#111111] p-6 rounded-3xl space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-black text-base text-gray-900 dark:text-white">Мои товары</h3>
+            <h3 className="font-black text-base text-gray-900 dark:text-white">{t.seller.productsTab}</h3>
             <Link
               to="/seller/products"
               className="text-xs font-bold text-[#F14635] hover:underline flex items-center gap-1"
             >
-              <span>Управление складом</span>
+              <span>{language === 'kk' ? 'Қойманы басқару' : 'Управление складом'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -271,17 +276,17 @@ export const SellerDashboard: React.FC = () => {
                 <div className="flex items-center gap-3 shrink-0">
                   <div className="text-right">
                     <span className="text-xs font-bold text-gray-900 dark:text-white block">
-                      {product.stock} шт.
+                      {product.stock} {t.common.units}
                     </span>
                     <span className="text-[10px] text-gray-400">
-                      {product.salesCount} прод.
+                      {product.salesCount} {language === 'kk' ? 'сат.' : 'прод.'}
                     </span>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => toggleProductActive(product.id)}
-                    title={product.isActive ? 'Снять с витрины' : 'Опубликовать'}
+                    title={product.isActive ? (language === 'kk' ? 'Витринадан алу' : 'Снять с витрины') : (language === 'kk' ? 'Жариялау' : 'Опубликовать')}
                     className={`p-2 rounded-xl transition-colors cursor-pointer ${
                       product.isActive
                         ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400'

@@ -15,10 +15,12 @@ import { useToastStore } from '../../store/useToastStore';
 import { SafeImage } from '../../components/ui/SafeImage';
 import { CategoryId } from '../../types';
 import { CATEGORIES } from '../../data/mockProducts';
+import { useT } from '../../i18n/useT';
 
 export const ProductEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t, language } = useT();
 
   const { products, updateProduct, deleteProduct } = useProductStore();
   const { user } = useAuthStore();
@@ -56,19 +58,21 @@ export const ProductEditPage: React.FC = () => {
   // Protect route for Admin only
   if (user?.role !== 'admin') {
     return (
-      <div className="max-w-md mx-auto my-16 bg-gray-50 rounded-3xl p-10 text-center space-y-4">
-        <div className="w-14 h-14 bg-[#FFF1F0] text-[#F14635] rounded-full flex items-center justify-center mx-auto shadow-xs">
+      <div className="max-w-md mx-auto my-16 bg-gray-50 dark:bg-[#111111] rounded-3xl p-10 text-center space-y-4">
+        <div className="w-14 h-14 bg-[#FFF1F0] dark:bg-red-900/30 text-[#F14635] rounded-full flex items-center justify-center mx-auto shadow-xs">
           <Lock className="w-7 h-7" />
         </div>
-        <h2 className="text-2xl font-black text-gray-900">Доступ ограничен</h2>
-        <p className="text-xs text-gray-500">
-          Страница редактирования товаров доступна только для администратора.
+        <h2 className="text-2xl font-black text-gray-900 dark:text-white">
+          {language === 'kk' ? 'Қолжетімділік шектелген' : 'Доступ ограничен'}
+        </h2>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          {language === 'kk' ? 'Тауарды өзгерту беті тек әкімшіге арналған.' : 'Страница редактирования товаров доступна только для администратора.'}
         </p>
         <Link
           to="/auth"
           className="inline-flex items-center gap-2 bg-[#F14635] text-white px-6 py-3 rounded-2xl font-bold text-xs hover:bg-[#E03221] transition-all shadow-sm"
         >
-          <span>Войти в аккаунт</span>
+          <span>{t.auth.loginTitle}</span>
         </Link>
       </div>
     );
@@ -76,20 +80,20 @@ export const ProductEditPage: React.FC = () => {
 
   if (!product) {
     return (
-      <div className="max-w-md mx-auto my-16 bg-gray-50 rounded-3xl p-10 text-center space-y-4">
-        <div className="w-14 h-14 bg-white text-gray-400 rounded-full flex items-center justify-center mx-auto shadow-xs">
+      <div className="max-w-md mx-auto my-16 bg-gray-50 dark:bg-[#111111] rounded-3xl p-10 text-center space-y-4">
+        <div className="w-14 h-14 bg-white dark:bg-[#1a1a1a] text-gray-400 rounded-full flex items-center justify-center mx-auto shadow-xs">
           <AlertCircle className="w-7 h-7 text-rose-500" />
         </div>
-        <h2 className="text-2xl font-black text-gray-900">Товар не найден</h2>
-        <p className="text-xs text-gray-500">
-          Товар с ID #{id} не существует или был удален.
+        <h2 className="text-2xl font-black text-gray-900 dark:text-white">{t.catalog.noProductsTitle}</h2>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          {language === 'kk' ? `ID #${id} тауары табылмады.` : `Товар с ID #${id} не существует или был удален.`}
         </p>
         <Link
           to="/catalog"
           className="inline-flex items-center gap-2 bg-[#F14635] text-white px-6 py-3 rounded-2xl font-bold text-xs hover:bg-[#E03221] transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Вернуться в каталог</span>
+          <span>{t.cart.goToCatalog}</span>
         </Link>
       </div>
     );
@@ -122,7 +126,7 @@ export const ProductEditPage: React.FC = () => {
     });
 
     addToast({
-      message: `Товар «${title}» успешно сохранен`,
+      message: `${language === 'kk' ? 'Тауар сақталды' : 'Товар успешно сохранен'}: «${title}»`,
       type: 'success',
     });
 
@@ -130,10 +134,10 @@ export const ProductEditPage: React.FC = () => {
   };
 
   const handleDelete = () => {
-    if (window.confirm(`Вы уверены, что хотите удалить товар «${product.title}»?`)) {
+    if (window.confirm(`${language === 'kk' ? 'Тауарды өшіруді растайсыз ба' : 'Вы уверены, что хотите удалить товар'} «${product.title}»?`)) {
       deleteProduct(product.id);
       addToast({
-        message: `Товар «${product.title}» удален со склада`,
+        message: `${language === 'kk' ? 'Тауар қоймадан өшірілді' : 'Товар удален со склада'}: «${product.title}»`,
         type: 'info',
       });
       navigate('/catalog');
@@ -147,22 +151,22 @@ export const ProductEditPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="p-2.5 rounded-2xl bg-gray-50 hover:bg-gray-100 text-gray-700 transition-colors"
-            title="Назад"
+            className="p-2.5 rounded-2xl bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] text-gray-700 dark:text-gray-300 transition-colors cursor-pointer"
+            title={t.common.back}
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-black text-gray-900 tracking-tight">
-                Редактирование товара
+              <h1 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+                {t.seller.addProductModal.editTitle}
               </h1>
-              <span className="bg-[#FFF1F0] text-[#F14635] text-[10px] font-mono font-bold px-2 py-0.5 rounded-full">
+              <span className="bg-[#FFF1F0] dark:bg-red-900/30 text-[#F14635] text-[10px] font-mono font-bold px-2 py-0.5 rounded-full">
                 #{product.id}
               </span>
             </div>
             <p className="text-xs text-gray-400 mt-0.5">
-              Внесите изменения и нажмите кнопку сохранения
+              {language === 'kk' ? 'Өзгерістерді енгізіп, сақтау батырмасын басыңыз' : 'Внесите изменения и нажмите кнопку сохранения'}
             </p>
           </div>
         </div>
@@ -170,16 +174,16 @@ export const ProductEditPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <Link
             to={`/product/${product.id}`}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-gray-50 text-gray-700 font-bold text-xs hover:bg-gray-100 transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-gray-50 dark:bg-[#111111] text-gray-700 dark:text-gray-300 font-bold text-xs hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
           >
             <Eye className="w-3.5 h-3.5" />
-            <span>Страница товара</span>
+            <span>{t.product.viewDetails}</span>
           </Link>
 
           <button
             onClick={handleDelete}
-            className="p-2.5 rounded-2xl text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-            title="Удалить товар"
+            className="p-2.5 rounded-2xl text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
+            title={t.common.delete}
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -190,46 +194,48 @@ export const ProductEditPage: React.FC = () => {
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left 2 Columns: Main Fields */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-gray-50 p-6 sm:p-8 rounded-3xl space-y-4 text-xs">
-            <h2 className="text-base font-black text-gray-900">Основная информация</h2>
+          <div className="bg-gray-50 dark:bg-[#111111] p-6 sm:p-8 rounded-3xl space-y-4 text-xs">
+            <h2 className="text-base font-black text-gray-900 dark:text-white">
+              {language === 'kk' ? 'Негізгі ақпарат' : 'Основная информация'}
+            </h2>
 
             {/* Title */}
             <div className="space-y-1.5">
-              <label className="font-bold text-gray-700 block">Название товара</label>
+              <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.name}</label>
               <input
                 type="text"
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Например: Классическая хлопковая футболка"
-                className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs"
+                placeholder="Classic Cotton T-Shirt"
+                className="w-full bg-white dark:bg-[#1a1a1a] rounded-2xl px-4 py-3 text-xs text-gray-900 dark:text-white outline-none shadow-xs"
               />
             </div>
 
             {/* Brand & Category */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="font-bold text-gray-700 block">Бренд / Производитель</label>
+                <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.brand}</label>
                 <input
                   type="text"
                   required
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
                   placeholder="Qazaq Republic"
-                  className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs"
+                  className="w-full bg-white dark:bg-[#1a1a1a] rounded-2xl px-4 py-3 text-xs text-gray-900 dark:text-white outline-none shadow-xs"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-bold text-gray-700 block">Категория одежды</label>
+                <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.category}</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as CategoryId)}
-                  className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs cursor-pointer"
+                  className="w-full bg-white dark:bg-[#1a1a1a] rounded-2xl px-4 py-3 text-xs text-gray-900 dark:text-white outline-none shadow-xs cursor-pointer"
                 >
                   {CATEGORIES.filter((c) => c.id !== 'all').map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.name} ({c.nameKz})
+                      {t.catalog.categories[c.id] || c.name}
                     </option>
                   ))}
                 </select>
@@ -239,35 +245,35 @@ export const ProductEditPage: React.FC = () => {
             {/* Pricing & Stock */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
               <div className="space-y-1.5">
-                <label className="font-bold text-gray-700 block">Текущая цена (₸)</label>
+                <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.price}</label>
                 <input
                   type="number"
                   required
                   value={price}
                   onChange={(e) => setPrice(Number(e.target.value))}
-                  className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs font-bold"
+                  className="w-full bg-white dark:bg-[#1a1a1a] rounded-2xl px-4 py-3 text-xs text-gray-900 dark:text-white outline-none shadow-xs font-bold"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-bold text-gray-700 block">Старая цена (₸)</label>
+                <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.oldPrice}</label>
                 <input
                   type="number"
                   value={oldPrice || ''}
                   onChange={(e) => setOldPrice(e.target.value ? Number(e.target.value) : undefined)}
-                  placeholder="Для расчета % скидки"
-                  className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs"
+                  placeholder={language === 'kk' ? 'Жеңілдік үшін' : 'Для расчета % скидки'}
+                  className="w-full bg-white dark:bg-[#1a1a1a] rounded-2xl px-4 py-3 text-xs text-gray-900 dark:text-white outline-none shadow-xs"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-bold text-gray-700 block">Остаток на складе (шт.)</label>
+                <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.stock}</label>
                 <input
                   type="number"
                   required
                   value={stock}
                   onChange={(e) => setStock(Number(e.target.value))}
-                  className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs font-bold"
+                  className="w-full bg-white dark:bg-[#1a1a1a] rounded-2xl px-4 py-3 text-xs text-gray-900 dark:text-white outline-none shadow-xs font-bold"
                 />
               </div>
             </div>
@@ -275,37 +281,37 @@ export const ProductEditPage: React.FC = () => {
             {/* Sizes & Colors */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="space-y-1.5">
-                <label className="font-bold text-gray-700 block">Размеры (через запятую)</label>
+                <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.sizes}</label>
                 <input
                   type="text"
                   value={sizes}
                   onChange={(e) => setSizes(e.target.value)}
                   placeholder="S, M, L, XL"
-                  className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs"
+                  className="w-full bg-white dark:bg-[#1a1a1a] rounded-2xl px-4 py-3 text-xs text-gray-900 dark:text-white outline-none shadow-xs"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-bold text-gray-700 block">Цвета (через запятую)</label>
+                <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.colors}</label>
                 <input
                   type="text"
                   value={colors}
                   onChange={(e) => setColors(e.target.value)}
-                  placeholder="Черный, Белый, Серый"
-                  className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs"
+                  placeholder="Қара, Ақ"
+                  className="w-full bg-white dark:bg-[#1a1a1a] rounded-2xl px-4 py-3 text-xs text-gray-900 dark:text-white outline-none shadow-xs"
                 />
               </div>
             </div>
 
             {/* Description */}
             <div className="space-y-1.5 pt-2">
-              <label className="font-bold text-gray-700 block">Описание и состав материала</label>
+              <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.description}</label>
               <textarea
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Подробное описание товара..."
-                className="w-full bg-white rounded-2xl p-4 text-xs text-gray-900 outline-none shadow-xs resize-none"
+                placeholder="..."
+                className="w-full bg-white dark:bg-[#1a1a1a] rounded-2xl p-4 text-xs text-gray-900 dark:text-white outline-none shadow-xs resize-none"
               />
             </div>
           </div>
@@ -314,23 +320,23 @@ export const ProductEditPage: React.FC = () => {
         {/* Right 1 Column: Image Preview & Save Actions */}
         <div className="space-y-6">
           {/* Image preview card */}
-          <div className="bg-gray-50 p-6 rounded-3xl space-y-4 text-xs">
-            <h2 className="text-base font-black text-gray-900">Фотография товара</h2>
+          <div className="bg-gray-50 dark:bg-[#111111] p-6 rounded-3xl space-y-4 text-xs">
+            <h2 className="text-base font-black text-gray-900 dark:text-white">{language === 'kk' ? 'Тауар суреті' : 'Фотография товара'}</h2>
 
             <div className="space-y-1.5">
-              <label className="font-bold text-gray-700 block">URL изображения</label>
+              <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.imageUrl}</label>
               <input
                 type="url"
                 required
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
                 placeholder="https://images.unsplash.com/..."
-                className="w-full bg-white rounded-2xl px-4 py-3 text-xs text-gray-900 outline-none shadow-xs"
+                className="w-full bg-white dark:bg-[#1a1a1a] rounded-2xl px-4 py-3 text-xs text-gray-900 dark:text-white outline-none shadow-xs"
               />
             </div>
 
             {/* Live Preview */}
-            <div className="aspect-[4/5] bg-white rounded-2xl overflow-hidden shadow-xs relative flex items-center justify-center">
+            <div className="aspect-[4/5] bg-white dark:bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-xs relative flex items-center justify-center">
               {imageUrl ? (
                 <SafeImage
                   src={imageUrl}
@@ -340,28 +346,28 @@ export const ProductEditPage: React.FC = () => {
               ) : (
                 <div className="text-gray-400 flex flex-col items-center gap-2">
                   <ImageIcon className="w-8 h-8" />
-                  <span>Нет изображения</span>
+                  <span>{language === 'kk' ? 'Сурет жоқ' : 'Нет изображения'}</span>
                 </div>
               )}
             </div>
           </div>
 
           {/* Action buttons */}
-          <div className="bg-gray-50 p-6 rounded-3xl space-y-3">
+          <div className="bg-gray-50 dark:bg-[#111111] p-6 rounded-3xl space-y-3">
             <button
               type="submit"
-              className="w-full bg-[#F14635] hover:bg-[#E03221] text-white py-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm"
+              className="w-full bg-[#F14635] hover:bg-[#E03221] text-white py-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm cursor-pointer"
             >
               <Save className="w-4 h-4" />
-              <span>Сохранить изменения</span>
+              <span>{t.common.save}</span>
             </button>
 
             <button
               type="button"
               onClick={() => navigate('/admin')}
-              className="w-full bg-white hover:bg-gray-100 text-gray-700 py-3.5 rounded-2xl font-bold text-xs transition-colors shadow-xs"
+              className="w-full bg-white dark:bg-[#1a1a1a] hover:bg-gray-100 dark:hover:bg-[#222222] text-gray-700 dark:text-gray-300 py-3.5 rounded-2xl font-bold text-xs transition-colors shadow-xs cursor-pointer"
             >
-              Отмена
+              {t.common.cancel}
             </button>
           </div>
         </div>

@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useT } from '../../i18n/useT';
 
 export const Footer: React.FC = () => {
+  const { t } = useT();
+
   return (
     <footer className="bg-gray-50 dark:bg-[#111111] pt-16 pb-24 lg:pb-16 text-sm text-gray-600 dark:text-gray-400 mt-20 rounded-3xl">
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
@@ -13,40 +16,82 @@ export const Footer: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-gray-500 leading-relaxed">
-              Заманауи киім және аяқ киім маркетплейсі. Минимализм, сапа және жылдам жеткізу.
+              {t.footer.description}
             </p>
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 dark:text-white mb-3 text-xs uppercase tracking-wider">Категории</h4>
+            <h4 className="font-bold text-gray-900 dark:text-white mb-3 text-xs uppercase tracking-wider">
+              {t.footer.categories}
+            </h4>
             <ul className="space-y-2 text-xs text-gray-500">
-              <li><Link to="/catalog?cat=headwear" className="hover:text-[#F14635] transition-colors">Головные уборы</Link></li>
-              <li><Link to="/catalog?cat=tops" className="hover:text-[#F14635] transition-colors">Верхняя одежда и худи</Link></li>
-              <li><Link to="/catalog?cat=bottoms" className="hover:text-[#F14635] transition-colors">Брюки и джинсы</Link></li>
-              <li><Link to="/catalog?cat=footwear" className="hover:text-[#F14635] transition-colors">Обувь и кроссовки</Link></li>
+              <li>
+                <Link to="/catalog?cat=headwear" className="hover:text-[#F14635] transition-colors">
+                  {t.catalog.categories.headwear}
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog?cat=tops" className="hover:text-[#F14635] transition-colors">
+                  {t.catalog.categories.tops}
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog?cat=bottoms" className="hover:text-[#F14635] transition-colors">
+                  {t.catalog.categories.bottoms}
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog?cat=footwear" className="hover:text-[#F14635] transition-colors">
+                  {t.catalog.categories.footwear}
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 dark:text-white mb-3 text-xs uppercase tracking-wider">Клиентам</h4>
+            <h4 className="font-bold text-gray-900 dark:text-white mb-3 text-xs uppercase tracking-wider">
+              {t.footer.forClients}
+            </h4>
             <ul className="space-y-2 text-xs text-gray-500">
-              <li><Link to="/dashboard" className="hover:text-[#F14635] transition-colors">История заказов и трат</Link></li>
-              <li><Link to="/cart" className="hover:text-[#F14635] transition-colors">Корзина и доставка</Link></li>
-              <li><Link to="/auth" className="hover:text-[#F14635] transition-colors">Вход в личный кабинет</Link></li>
+              <li>
+                <Link to="/dashboard" className="hover:text-[#F14635] transition-colors">
+                  {t.dashboard.ordersTab}
+                </Link>
+              </li>
+              <li>
+                <Link to="/cart" className="hover:text-[#F14635] transition-colors">
+                  {t.cart.title}
+                </Link>
+              </li>
+              <li>
+                <Link to="/auth" className="hover:text-[#F14635] transition-colors">
+                  {t.auth.loginTitle}
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 dark:text-white mb-3 text-xs uppercase tracking-wider">Управление</h4>
+            <h4 className="font-bold text-gray-900 dark:text-white mb-3 text-xs uppercase tracking-wider">
+              {t.footer.management}
+            </h4>
             <ul className="space-y-2 text-xs text-gray-500">
-              <li><Link to="/admin" className="hover:text-[#F14635] transition-colors">Админ-панель</Link></li>
-              <li><Link to="/admin" className="hover:text-[#F14635] transition-colors">Учет склада и остатков</Link></li>
+              <li>
+                <Link to="/seller" className="hover:text-[#F14635] transition-colors">
+                  {t.nav.sellerPanel}
+                </Link>
+              </li>
+              <li>
+                <Link to="/admin" className="hover:text-[#F14635] transition-colors">
+                  {t.nav.adminPanel}
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
-          <p>© 2026 KitapAll Marketplace. Барлық құқықтар қорғалған.</p>
+          <p>© 2026 KitapAll Marketplace. {t.footer.rights}</p>
         </div>
       </div>
     </footer>

@@ -14,8 +14,10 @@ import {
 import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useSellerStore } from '../../store/useSellerStore';
+import { useT } from '../../i18n/useT';
 
 export const MobileBottomNav: React.FC = () => {
+  const { t } = useT();
   const { getTotalItems } = useCartStore();
   const { user } = useAuthStore();
   const { orders: sellerOrders } = useSellerStore();
@@ -24,42 +26,42 @@ export const MobileBottomNav: React.FC = () => {
   const newSellerOrdersCount = sellerOrders.filter((o) => o.status === 'new').length;
 
   let navItems = [
-    { to: '/', label: 'Главная', icon: Home },
-    { to: '/catalog', label: 'Каталог', icon: LayoutGrid },
-    { to: '/wishlist', label: 'Избранное', icon: Heart },
+    { to: '/', label: t.nav.home, icon: Home },
+    { to: '/catalog', label: t.nav.catalog, icon: LayoutGrid },
+    { to: '/wishlist', label: t.nav.wishlist, icon: Heart },
     { 
       to: '/cart', 
-      label: 'Корзина', 
+      label: t.nav.cart, 
       icon: ShoppingBag, 
       badge: cartCount > 0 ? cartCount : undefined 
     },
     { 
       to: user ? '/dashboard' : '/auth', 
-      label: user ? 'Кабинет' : 'Войти', 
+      label: user ? t.nav.profile : t.nav.login, 
       icon: User 
     },
   ];
 
   if (user?.role === 'admin') {
     navItems = [
-      { to: '/', label: 'Главная', icon: Home },
-      { to: '/catalog', label: 'Витрина', icon: LayoutGrid },
-      { to: '/admin?tab=inventory', label: 'Склад', icon: Boxes },
-      { to: '/admin?tab=orders', label: 'Заказы', icon: ShoppingBag },
-      { to: '/admin', label: 'Админка', icon: ShieldCheck },
+      { to: '/', label: t.nav.home, icon: Home },
+      { to: '/catalog', label: t.nav.showcase, icon: LayoutGrid },
+      { to: '/admin?tab=inventory', label: t.nav.warehouse, icon: Boxes },
+      { to: '/admin?tab=orders', label: t.nav.orders, icon: ShoppingBag },
+      { to: '/admin', label: t.nav.adminPanel, icon: ShieldCheck },
     ];
   } else if (user?.role === 'seller') {
     navItems = [
-      { to: '/seller', label: 'Обзор', icon: Store },
-      { to: '/seller/products', label: 'Товары', icon: Boxes },
+      { to: '/seller', label: t.nav.overview, icon: Store },
+      { to: '/seller/products', label: t.nav.products, icon: Boxes },
       { 
         to: '/seller/orders', 
-        label: 'Заказы', 
+        label: t.nav.orders, 
         icon: ShoppingBag, 
         badge: newSellerOrdersCount > 0 ? newSellerOrdersCount : undefined 
       },
-      { to: '/seller/analytics', label: 'Аналитика', icon: TrendingUp },
-      { to: '/catalog', label: 'Витрина', icon: LayoutGrid },
+      { to: '/seller/analytics', label: t.nav.analytics, icon: TrendingUp },
+      { to: '/catalog', label: t.nav.showcase, icon: LayoutGrid },
     ];
   }
 

@@ -5,8 +5,10 @@ import { useProductStore } from '../../store/useProductStore';
 import { ProductCard } from '../../components/product/ProductCard';
 import { CATEGORIES } from '../../data/mockProducts';
 import { CategoryId } from '../../types';
+import { useT } from '../../i18n/useT';
 
 export const CatalogPage: React.FC = () => {
+  const { t, language } = useT();
   const [searchParams, setSearchParams] = useSearchParams();
   const catParam = searchParams.get('cat') as CategoryId | null;
 
@@ -106,25 +108,25 @@ export const CatalogPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
         <div>
           <h1 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white tracking-tight">
-            Каталог одежды
+            {t.catalog.title}
           </h1>
           <p className="text-xs text-gray-400 mt-1">
-            Найдено моделей: <b className="text-gray-900 dark:text-white">{filteredProducts.length}</b>
+            {t.catalog.foundCount(filteredProducts.length)}
           </p>
         </div>
 
         {/* Sort selector */}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-400">Сортировка:</span>
+          <span className="text-xs text-gray-400">{t.catalog.sort.label}</span>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
             className="bg-gray-50 dark:bg-[#111111] text-gray-800 dark:text-gray-100 text-xs font-semibold rounded-xl px-3 py-2 outline-none cursor-pointer hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
           >
-            <option value="popular">По популярности</option>
-            <option value="price_asc">Сначала дешевле</option>
-            <option value="price_desc">Сначала дороже</option>
-            <option value="rating">По рейтингу</option>
+            <option value="popular">{t.catalog.sort.popular}</option>
+            <option value="price_asc">{t.catalog.sort.priceAsc}</option>
+            <option value="price_desc">{t.catalog.sort.priceDesc}</option>
+            <option value="rating">{t.catalog.sort.rating}</option>
           </select>
         </div>
       </div>
@@ -137,6 +139,10 @@ export const CatalogPage: React.FC = () => {
             ? products.length 
             : products.filter(p => p.category === cat.id).length;
 
+          const catLabel = cat.id === 'all'
+            ? t.catalog.allCategories
+            : (t.catalog.categories[cat.id] || (language === 'kk' ? cat.nameKz : cat.name));
+
           return (
             <button
               key={cat.id}
@@ -147,7 +153,7 @@ export const CatalogPage: React.FC = () => {
                   : 'bg-gray-50 dark:bg-[#111111] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] hover:text-gray-900 dark:hover:text-white'
               }`}
             >
-              <span>{cat.name}</span>
+              <span>{catLabel}</span>
               <span
                 className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
                   isActive ? 'bg-white/20 dark:bg-black/20 text-white dark:text-black' : 'text-gray-400'
@@ -171,18 +177,18 @@ export const CatalogPage: React.FC = () => {
               onChange={(e) => setInStockOnly(e.target.checked)}
               className="w-4 h-4 rounded text-[#F14635] accent-[#F14635]"
             />
-            <span>Только в наличии</span>
+            <span>{language === 'kk' ? 'Тек қоймадағылар' : 'Только в наличии'}</span>
           </label>
 
           {/* Brand filter dropdown */}
           <div className="flex items-center gap-1.5">
-            <span className="text-gray-400">Бренд:</span>
+            <span className="text-gray-400">{language === 'kk' ? 'Бренд:' : 'Бренд:'}</span>
             <select
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
-              className="bg-gray-50 rounded-lg px-2.5 py-1.5 text-xs text-gray-800 outline-none hover:bg-gray-100 transition-colors"
+              className="bg-gray-50 dark:bg-[#111111] dark:text-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-800 outline-none hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
             >
-              <option value="all">Все бренды</option>
+              <option value="all">{language === 'kk' ? 'Барлық брендтер' : 'Все бренды'}</option>
               {availableBrands.map((b) => (
                 <option key={b} value={b}>
                   {b}
@@ -193,16 +199,16 @@ export const CatalogPage: React.FC = () => {
 
           {/* Price budget filter */}
           <div className="flex items-center gap-1.5">
-            <span className="text-gray-400">Цена:</span>
+            <span className="text-gray-400">{language === 'kk' ? 'Бағасы:' : 'Цена:'}</span>
             <select
               value={selectedPriceRange}
               onChange={(e) => setSelectedPriceRange(e.target.value)}
-              className="bg-gray-50 rounded-lg px-2.5 py-1.5 text-xs text-gray-800 outline-none hover:bg-gray-100 transition-colors"
+              className="bg-gray-50 dark:bg-[#111111] dark:text-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-800 outline-none hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
             >
-              <option value="all">Любая стоимость</option>
-              <option value="under_10k">До 10 000 ₸</option>
+              <option value="all">{language === 'kk' ? 'Кез келген сома' : 'Любая стоимость'}</option>
+              <option value="under_10k">{language === 'kk' ? '10 000 ₸ дейін' : 'До 10 000 ₸'}</option>
               <option value="10k_30k">10 000 — 30 000 ₸</option>
-              <option value="above_30k">От 30 000 ₸</option>
+              <option value="above_30k">{language === 'kk' ? '30 000 ₸ жоғары' : 'От 30 000 ₸'}</option>
             </select>
           </div>
         </div>
@@ -211,21 +217,21 @@ export const CatalogPage: React.FC = () => {
         {hasActiveFilters && (
           <button
             onClick={handleResetFilters}
-            className="flex items-center gap-1 text-xs text-[#F14635] hover:underline font-semibold"
+            className="flex items-center gap-1 text-xs text-[#F14635] hover:underline font-semibold cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Сбросить фильтры</span>
+            <span>{t.catalog.resetFilters}</span>
           </button>
         )}
       </div>
 
       {/* Search query chip */}
       {searchQuery && (
-        <div className="inline-flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-lg text-xs text-gray-700">
-          <span>Поиск: <b>"{searchQuery}"</b></span>
+        <div className="inline-flex items-center gap-2 bg-gray-100 dark:bg-[#1a1a1a] px-3 py-1 rounded-lg text-xs text-gray-700 dark:text-gray-300">
+          <span>{t.catalog.searchResultFor(searchQuery)}</span>
           <button
             onClick={() => setSearchQuery('')}
-            className="text-gray-400 hover:text-gray-700"
+            className="text-gray-400 hover:text-gray-700 dark:hover:text-white cursor-pointer"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -243,19 +249,19 @@ export const CatalogPage: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="bg-gray-50 rounded-3xl p-12 text-center space-y-3">
-          <div className="w-12 h-12 bg-white text-gray-400 rounded-full flex items-center justify-center mx-auto shadow-xs">
+        <div className="bg-gray-50 dark:bg-[#111111] rounded-3xl p-12 text-center space-y-3">
+          <div className="w-12 h-12 bg-white dark:bg-[#1a1a1a] text-gray-400 rounded-full flex items-center justify-center mx-auto shadow-xs">
             <Search className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-bold text-gray-900">Товары не найдены</h3>
-          <p className="text-xs text-gray-500 max-w-sm mx-auto">
-            Попробуйте изменить параметры фильтрации или поисковый запрос.
+          <h3 className="text-base font-bold text-gray-900 dark:text-white">{t.catalog.noProductsTitle}</h3>
+          <p className="text-xs text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
+            {t.catalog.noProductsDesc}
           </p>
           <button
             onClick={handleResetFilters}
-            className="text-xs font-semibold text-[#F14635] hover:underline"
+            className="text-xs font-semibold text-[#F14635] hover:underline cursor-pointer"
           >
-            Сбросить все фильтры
+            {t.catalog.resetFilters}
           </button>
         </div>
       )}

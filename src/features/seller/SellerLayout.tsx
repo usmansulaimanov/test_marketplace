@@ -17,9 +17,12 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { useThemeStore } from '../../store/useThemeStore';
 import { useSellerStore } from '../../store/useSellerStore';
 import { ToastContainer } from '../../components/ui/ToastContainer';
+import { useT } from '../../i18n/useT';
+import { LanguageSwitcher } from '../../components/ui/LanguageSwitcher';
 
 export const SellerLayout: React.FC = () => {
   const navigate = useNavigate();
+  const { t, language } = useT();
   const { user, logout } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
   const { orders } = useSellerStore();
@@ -33,15 +36,15 @@ export const SellerLayout: React.FC = () => {
   };
 
   const navItems = [
-    { to: '/seller', label: 'Обзор', icon: LayoutDashboard, end: true },
-    { to: '/seller/products', label: 'Мои товары', icon: Boxes },
+    { to: '/seller', label: t.seller.overviewTab, icon: LayoutDashboard, end: true },
+    { to: '/seller/products', label: t.seller.productsTab, icon: Boxes },
     { 
       to: '/seller/orders', 
-      label: 'Заказы клиентов', 
+      label: t.seller.ordersTab, 
       icon: ShoppingBag, 
       badge: newOrdersCount > 0 ? newOrdersCount : undefined 
     },
-    { to: '/seller/analytics', label: 'Аналитика продаж', icon: TrendingUp },
+    { to: '/seller/analytics', label: t.seller.analyticsTab, icon: TrendingUp },
   ];
 
   return (
@@ -67,6 +70,7 @@ export const SellerLayout: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher variant="compact" />
           <button
             type="button"
             onClick={toggleTheme}
@@ -126,19 +130,25 @@ export const SellerLayout: React.FC = () => {
               </div>
               <div className="min-w-0 flex-1">
                 <h4 className="font-bold text-xs text-gray-900 dark:text-white truncate">
-                  {user?.name || 'Мой магазин'}
+                  {user?.name || (language === 'kk' ? 'Менің дүкенім' : 'Мой магазин')}
                 </h4>
                 <p className="text-[10px] text-gray-400 truncate">{user?.email}</p>
               </div>
             </div>
             <div className="pt-2 border-t border-gray-50 dark:border-neutral-800/60 flex items-center justify-between text-xs">
               <span className="text-[11px] text-gray-400 font-medium flex items-center gap-1">
-                <Wallet className="w-3 h-3 text-[#F14635]" /> Баланс
+                <Wallet className="w-3 h-3 text-[#F14635]" /> {t.dashboard.balance}
               </span>
               <span className="font-black text-gray-900 dark:text-white">
                 {user?.balance?.toLocaleString()} ₸
               </span>
             </div>
+          </div>
+
+          {/* Language Switcher in Seller Sidebar */}
+          <div className="px-2 flex items-center justify-between">
+            <span className="text-gray-500 text-xs font-semibold">{language === 'kk' ? 'Тіл:' : 'Язык:'}</span>
+            <LanguageSwitcher variant="compact" />
           </div>
 
           {/* Navigation Links */}
@@ -187,7 +197,7 @@ export const SellerLayout: React.FC = () => {
               ) : (
                 <Moon className="w-4 h-4 text-gray-600" />
               )}
-              <span>{theme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}</span>
+              <span>{theme === 'dark' ? (language === 'kk' ? 'Ашық тақырып' : 'Светлая тема') : (language === 'kk' ? 'Қараңғы тақырып' : 'Тёмная тема')}</span>
             </div>
           </button>
 
@@ -196,7 +206,7 @@ export const SellerLayout: React.FC = () => {
             className="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-[#111111] hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <Store className="w-4 h-4 text-[#F14635]" />
-            <span>В витрину магазина</span>
+            <span>{t.nav.showcase}</span>
           </Link>
 
           <button
@@ -205,7 +215,7 @@ export const SellerLayout: React.FC = () => {
             className="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
-            <span>Выйти из кабинета</span>
+            <span>{t.nav.logout}</span>
           </button>
         </div>
       </aside>

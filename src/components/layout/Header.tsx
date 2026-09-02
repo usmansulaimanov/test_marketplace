@@ -17,11 +17,14 @@ import { useProductStore } from '../../store/useProductStore';
 import { useUiStore } from '../../store/useUiStore';
 import { useWishlistStore } from '../../store/useWishlistStore';
 import { useThemeStore } from '../../store/useThemeStore';
+import { useT } from '../../i18n/useT';
+import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { t } = useT();
   const { items, getTotalItems } = useCartStore();
   const { user, isAuthenticated, logout } = useAuthStore();
   const { searchQuery, setSearchQuery } = useProductStore();
@@ -51,8 +54,8 @@ export const Header: React.FC = () => {
           <div className="flex items-center gap-3 md:gap-6">
             <button
               onClick={toggleSidebar}
-              className="p-2 -ml-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] rounded-xl transition-colors"
-              title="Главное меню"
+              className="p-2 -ml-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] rounded-xl transition-colors cursor-pointer"
+              title={t.nav.mainMenu}
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -74,12 +77,12 @@ export const Header: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Поиск одежды, обуви, головных уборов..."
+                placeholder={t.header.searchPlaceholder}
                 className="w-full bg-gray-50 dark:bg-[#111111] border-none focus:bg-gray-100 dark:focus:bg-[#1a1a1a] text-gray-900 dark:text-white dark:placeholder-gray-500 rounded-xl pl-4 pr-12 py-2.5 text-xs outline-none transition-all"
               />
               <button
                 type="submit"
-                className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-[#F14635] text-white p-1.5 rounded-lg hover:bg-[#E03221] transition-colors"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-[#F14635] text-white p-1.5 rounded-lg hover:bg-[#E03221] transition-colors cursor-pointer"
               >
                 <Search className="w-3.5 h-3.5" />
               </button>
@@ -87,12 +90,15 @@ export const Header: React.FC = () => {
           </form>
 
           <div className="hidden lg:flex items-center gap-2">
+            {/* Language Switcher */}
+            <LanguageSwitcher />
+
             {/* Theme Toggle Button */}
             <button
               type="button"
               onClick={toggleTheme}
               className="p-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1a1a1a] rounded-xl transition-colors cursor-pointer"
-              title={theme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}
+              title={t.header.toggleTheme}
             >
               {theme === 'dark' ? (
                 <Sun className="w-5 h-5 text-amber-400" />
@@ -107,7 +113,7 @@ export const Header: React.FC = () => {
                 <Link
                   to="/wishlist"
                   className="p-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1a1a1a] rounded-xl transition-colors relative"
-                  title="Избранное"
+                  title={t.nav.wishlist}
                 >
                   <Heart className="w-5 h-5" />
                   {wishlistItems.length > 0 && (
@@ -142,7 +148,7 @@ export const Header: React.FC = () => {
                 {user?.role === 'admin' ? (
                   <Link
                     to="/admin"
-                    title="Админ-панель"
+                    title={t.nav.adminPanel}
                     className="p-2.5 rounded-xl bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] text-[#F14635] flex items-center justify-center transition-colors shadow-xs"
                   >
                     <ShieldCheck className="w-4 h-4" />
@@ -150,15 +156,15 @@ export const Header: React.FC = () => {
                 ) : user?.role === 'seller' ? (
                   <Link
                     to="/seller"
-                    title="Кабинет продавца"
+                    title={t.nav.sellerPanel}
                     className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-white bg-[#F14635] hover:bg-[#E03221] transition-colors shadow-xs"
                   >
-                    <span className="text-xs font-bold">Кабинет продавца</span>
+                    <span className="text-xs font-bold">{t.nav.sellerPanel}</span>
                   </Link>
                 ) : (
                   <Link
                     to="/dashboard"
-                    title="Личный кабинет"
+                    title={t.nav.profile}
                     className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
                   >
                     <div className="w-6 h-6 rounded-full bg-white dark:bg-[#222222] flex items-center justify-center text-gray-700 dark:text-gray-300 shadow-xs">
@@ -172,7 +178,7 @@ export const Header: React.FC = () => {
 
                 <button
                   onClick={handleLogout}
-                  title="Выйти из аккаунта"
+                  title={t.nav.logout}
                   className="p-2 text-gray-400 hover:text-red-500 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" />
@@ -184,7 +190,7 @@ export const Header: React.FC = () => {
                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900 text-white text-xs font-bold transition-all hover:bg-black"
               >
                 <UserIcon className="w-3.5 h-3.5" />
-                <span>Войти</span>
+                <span>{t.header.loginBtn}</span>
               </Link>
             )}
           </div>

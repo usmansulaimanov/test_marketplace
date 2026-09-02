@@ -5,19 +5,19 @@ import { SafeImage } from '../ui/SafeImage';
 import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useWishlistStore } from '../../store/useWishlistStore';
-import { useToastStore } from '../../store/useToastStore';
 import { useNavigate } from 'react-router-dom';
+import { useT } from '../../i18n/useT';
 
 interface ProductCardProps {
   product: Product;
-  onOpenDetail?: (product: Product) => void;
+  onEdit?: (product: Product) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit }) => {
   const navigate = useNavigate();
+  const { t } = useT();
   const { addItem } = useCartStore();
   const { user } = useAuthStore();
-  const { addToast } = useToastStore();
   const { toggleWishlist, isInWishlist } = useWishlistStore();
 
   const isFavorite = isInWishlist(product.id);
@@ -25,8 +25,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isAdded, setIsAdded] = useState(false);
   const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0] || '');
 
-  const isOutOfStock = product.stock === 0;
-  const isLowStock = product.stock > 0 && product.stock <= 5;
+  const isOutOfStock = product.stock <= 0;
+  const isLowStock = product.stock > 0 && product.stock <= 3;
   const isAdmin = user?.role === 'admin';
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -34,11 +34,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     if (isOutOfStock) return;
     addItem(product, selectedSize);
     setIsAdded(true);
-    addToast({
-      message: `«${product.title}» добавлено в корзину`,
-      actionLabel: 'Корзина',
-      onAction: () => navigate('/cart'),
-    });
     setTimeout(() => setIsAdded(false), 1500);
   };
 
@@ -48,7 +43,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/product/${product.id}/edit`);
+    if (onEdit) {
+      onEdit(product);
+    } else {
+      navigate(`/product/${product.id}/edit`);
+    }
   };
 
   const handleWishlistClick = (e: React.MouseEvent) => {
@@ -77,7 +76,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <button
               onClick={handleWishlistClick}
               className="bg-white/95 dark:bg-[#111111]/95 hover:bg-white dark:hover:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 p-2 rounded-xl flex items-center justify-center shadow-xs transition-all active:scale-95 group/wishlist"
-              title="В избранное"
+              title={t.product.addToWishlist}
             >
               <Heart 
                 className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-[#F14635] text-[#F14635]' : 'text-gray-400 group-hover/wishlist:text-[#F14635]'}`} 
@@ -90,10 +89,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <button
               onClick={handleEditClick}
               className="bg-white/95 dark:bg-[#111111]/95 hover:bg-white dark:hover:bg-[#1a1a1a] text-gray-900 dark:text-gray-100 text-[11px] font-bold px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-xs transition-all active:scale-95"
-              title="Редактировать товар (Админ)"
+              title={t.product.editProduct}
             >
               <Edit3 className="w-3.5 h-3.5 text-[#F14635]" />
-              <span>Изменить</span>
+              <span>{t.common.edit}</span>
             </button>
           )}
         </div>
@@ -102,13 +101,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {isOutOfStock ? (
           <div className="absolute inset-0 bg-white/80 dark:bg-black/60 backdrop-blur-[1px] flex items-center justify-center">
             <span className="bg-gray-900 text-white text-xs font-semibold px-3 py-1 rounded-md">
-              Нет в наличии
+              {t.product.outOfStock}
             </span>
           </div>
         ) : isLowStock ? (
           <div className="absolute top-2.5 left-2.5">
             <span className="bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-              Осталось {product.stock} шт.
+              {t.product.leftCount(product.stock)}
             </span>
           </div>
         ) : null}
@@ -186,23 +185,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {isAdmin ? (
             <button
               onClick={handleEditClick}
-              className="flex items-center justify-center gap-1 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-black transition-all active:scale-95 shadow-xs"
+              className="flex items-center justify-center gap-1 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gray-900 dark:bg-white text-white dark:text-black hover:bg-black transition-all active:scale-95 shadow-xs cursor-pointer"
             >
               <Edit3 className="w-3.5 h-3.5" />
-              <span>Редактировать</span>
+              <span>{t.common.edit}</span>
             </button>
           ) : user?.role === 'seller' ? (
             <button
               onClick={handleCardClick}
-              className="flex items-center justify-center gap-1 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gray-100 dark:bg-[#1a1a1a] text-gray-800 dark:text-gray-200 hover:bg-gray-200 transition-all active:scale-95 shadow-xs"
+              className="flex items-center justify-center gap-1 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gray-100 dark:bg-[#1a1a1a] text-gray-800 dark:text-gray-200 hover:bg-gray-200 transition-all active:scale-95 shadow-xs cursor-pointer"
             >
-              <span>Подробнее</span>
+              <span>{t.product.viewDetails}</span>
             </button>
           ) : (
             <button
               onClick={handleAddToCart}
               disabled={isOutOfStock}
-              className={`flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 isOutOfStock
                   ? 'bg-gray-100 dark:bg-[#111111] text-gray-400 dark:text-gray-600 cursor-not-allowed'
                   : isAdded
@@ -213,12 +212,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               {isAdded ? (
                 <>
                   <Check className="w-3.5 h-3.5" />
-                  <span>В корзине</span>
+                  <span>{t.product.inCart}</span>
                 </>
               ) : (
                 <>
                   <ShoppingBag className="w-3.5 h-3.5" />
-                  <span>В корзину</span>
+                  <span>{t.product.addToCart}</span>
                 </>
               )}
             </button>

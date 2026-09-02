@@ -11,8 +11,10 @@ import { useProductStore } from '../../store/useProductStore';
 import { ProductCard } from '../../components/product/ProductCard';
 import { CATEGORIES } from '../../data/mockProducts';
 import { CategoryId } from '../../types';
+import { useT } from '../../i18n/useT';
 
 export const LandingPage: React.FC = () => {
+  const { t, language } = useT();
   const { products, setSelectedCategory } = useProductStore();
   const hitProducts = products.slice(0, 4);
 
@@ -23,12 +25,12 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-4xl space-y-6">
 
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-gray-900 dark:text-white leading-[1.1]">
-            Заманауи киім & <br />
-            <span className="text-[#F14635]">минимализм стилі</span>
+            {t.landing.heroTitleLine1} <br />
+            <span className="text-[#F14635]">{t.landing.heroTitleLine2}</span>
           </h1>
 
           <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg leading-relaxed max-w-2xl">
-            Сапалы табиғи материалдар, қалалық минимализм және күнделікті ыңғайлылық. Головные уборы, верхняя одежда, брюки және премиум аяқ киім.
+            {t.landing.heroSubtitle}
           </p>
 
           <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
@@ -38,14 +40,14 @@ export const LandingPage: React.FC = () => {
               className="w-full sm:w-auto bg-[#F14635] hover:bg-[#E03221] text-white px-8 py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm"
             >
               <ShoppingBag className="w-4 h-4" />
-              <span>Каталогты көру</span>
+              <span>{t.landing.viewCatalog}</span>
             </Link>
             <Link
               to="/catalog?cat=footwear"
               onClick={() => setSelectedCategory('footwear')}
               className="w-full sm:w-auto bg-gray-50 dark:bg-[#111111] hover:bg-gray-100 dark:hover:bg-[#1a1a1a] text-gray-900 dark:text-white px-7 py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-1.5 transition-all"
             >
-              <span>Обувь & кроссовки</span>
+              <span>{t.landing.viewFootwear}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -54,20 +56,36 @@ export const LandingPage: React.FC = () => {
         {/* Seamless stats row (no lines/boxes) */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-12">
           <div>
-            <span className="block text-3xl font-black text-gray-900 dark:text-white tracking-tight">100%</span>
-            <span className="text-xs text-gray-500 font-medium">Оригинал сапа</span>
+            <span className="block text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+              {t.landing.stats.originalQuality.val}
+            </span>
+            <span className="text-xs text-gray-500 font-medium">
+              {t.landing.stats.originalQuality.label}
+            </span>
           </div>
           <div>
-            <span className="block text-3xl font-black text-gray-900 dark:text-white tracking-tight">1-2 күн</span>
-            <span className="text-xs text-gray-500 font-medium">Жылдам жеткізу</span>
+            <span className="block text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+              {t.landing.stats.fastDelivery.val}
+            </span>
+            <span className="text-xs text-gray-500 font-medium">
+              {t.landing.stats.fastDelivery.label}
+            </span>
           </div>
           <div>
-            <span className="block text-3xl font-black text-gray-900 dark:text-white tracking-tight">4</span>
-            <span className="text-xs text-gray-500 font-medium">Негізгі категория</span>
+            <span className="block text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+              {t.landing.stats.categoriesCount.val}
+            </span>
+            <span className="text-xs text-gray-500 font-medium">
+              {t.landing.stats.categoriesCount.label}
+            </span>
           </div>
           <div>
-            <span className="block text-3xl font-black text-[#F14635] tracking-tight">Kaspi</span>
-            <span className="text-xs text-gray-500 font-medium">Ыңғайлы төлем</span>
+            <span className="block text-3xl font-black text-[#F14635] tracking-tight">
+              {t.landing.stats.kaspiPay.val}
+            </span>
+            <span className="text-xs text-gray-500 font-medium">
+              {t.landing.stats.kaspiPay.label}
+            </span>
           </div>
         </div>
       </section>
@@ -75,12 +93,14 @@ export const LandingPage: React.FC = () => {
       {/* 4 Main Categories Section */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Категории одежды</h2>
+          <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+            {t.landing.categoriesTitle}
+          </h2>
           <Link
             to="/catalog"
             className="text-xs font-bold text-[#F14635] hover:underline flex items-center gap-1"
           >
-            <span>Барлығы</span>
+            <span>{t.landing.viewAll}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -95,10 +115,10 @@ export const LandingPage: React.FC = () => {
             >
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                  {category.nameKz}
+                  {language === 'kk' ? category.nameKz : category.name}
                 </span>
                 <h3 className="font-bold text-base text-gray-900 dark:text-white group-hover:text-[#F14635] transition-colors mt-1">
-                  {category.name}
+                  {t.catalog.categories[category.id] || category.name}
                 </h3>
               </div>
               <div className="flex items-center justify-between text-xs text-gray-500">
@@ -113,20 +133,26 @@ export const LandingPage: React.FC = () => {
       {/* Featured / Popular Hits */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Хиты продаж</h2>
+          <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+            {t.landing.hitsTitle}
+          </h2>
           <Link
             to="/catalog"
             className="text-xs font-bold text-[#F14635] hover:underline flex items-center gap-1"
           >
-            <span>Смотреть весь каталог</span>
+            <span>{t.landing.viewAllHits}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
         {hitProducts.length === 0 ? (
           <div className="bg-gray-50 dark:bg-[#111111] p-12 rounded-3xl text-center space-y-2">
-            <h4 className="font-bold text-sm text-gray-900 dark:text-white">Товары скоро появятся</h4>
-            <p className="text-xs text-gray-400">Каталог обновляется, добавьте первые товары через панель продавца или администратора</p>
+            <h4 className="font-bold text-sm text-gray-900 dark:text-white">
+              {t.landing.emptyHitsTitle}
+            </h4>
+            <p className="text-xs text-gray-400">
+              {t.landing.emptyHitsDesc}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -147,9 +173,11 @@ export const LandingPage: React.FC = () => {
             <Truck className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="font-bold text-sm text-gray-900 dark:text-white">Жылдам жеткізу</h4>
+            <h4 className="font-bold text-sm text-gray-900 dark:text-white">
+              {t.landing.benefits.deliveryTitle}
+            </h4>
             <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-              Қазақстанның барлық қалаларына 1-3 күн ішінде курьер арқылы.
+              {t.landing.benefits.deliveryDesc}
             </p>
           </div>
         </div>
@@ -159,9 +187,11 @@ export const LandingPage: React.FC = () => {
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="font-bold text-sm text-gray-900 dark:text-white">Сапа кепілдігі</h4>
+            <h4 className="font-bold text-sm text-gray-900 dark:text-white">
+              {t.landing.benefits.guaranteeTitle}
+            </h4>
             <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-              Тек табиғи маталар мен тексерілген премиум брендтер.
+              {t.landing.benefits.guaranteeDesc}
             </p>
           </div>
         </div>
@@ -171,9 +201,11 @@ export const LandingPage: React.FC = () => {
             <RefreshCw className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="font-bold text-sm text-gray-900 dark:text-white">Оңай қайтару</h4>
+            <h4 className="font-bold text-sm text-gray-900 dark:text-white">
+              {t.landing.benefits.returnsTitle}
+            </h4>
             <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-              Өлшемі сәйкес келмесе, 14 күн ішінде кедергісіз айырбастау.
+              {t.landing.benefits.returnsDesc}
             </p>
           </div>
         </div>

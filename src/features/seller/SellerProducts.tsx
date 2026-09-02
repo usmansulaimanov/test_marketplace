@@ -13,8 +13,10 @@ import { useToastStore } from '../../store/useToastStore';
 import { SafeImage } from '../../components/ui/SafeImage';
 import { CategoryId } from '../../types';
 import { CATEGORIES } from '../../data/mockProducts';
+import { useT } from '../../i18n/useT';
 
 export const SellerProducts: React.FC = () => {
+  const { t, language } = useT();
   const { products, toggleProductActive, deleteProduct, addProduct, updateStock } = useSellerStore();
   const { addToast } = useToastStore();
 
@@ -44,11 +46,11 @@ export const SellerProducts: React.FC = () => {
   const handleCreateProduct = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
-      addToast({ message: 'Укажите название товара', type: 'error' });
+      addToast({ message: language === 'kk' ? 'Тауар атауын енгізіңіз' : 'Укажите название товара', type: 'error' });
       return;
     }
     if (price <= 0) {
-      addToast({ message: 'Цена должна быть больше 0', type: 'error' });
+      addToast({ message: language === 'kk' ? 'Баға 0-ден үлкен болуы керек' : 'Цена должна быть больше 0', type: 'error' });
       return;
     }
 
@@ -63,7 +65,7 @@ export const SellerProducts: React.FC = () => {
     });
 
     addToast({
-      message: `Товар «${title}» добавлен в ваш каталог!`,
+      message: `${language === 'kk' ? 'Тауар қосылды' : 'Товар добавлен'}: «${title}»`,
       type: 'success',
     });
 
@@ -75,10 +77,10 @@ export const SellerProducts: React.FC = () => {
   };
 
   const handleDelete = (id: string, productTitle: string) => {
-    if (window.confirm(`Удалить товар «${productTitle}»?`)) {
+    if (window.confirm(`${language === 'kk' ? 'Тауарды өшіруді растайсыз ба' : 'Удалить товар'} «${productTitle}»?`)) {
       deleteProduct(id);
       addToast({
-        message: `Товар «${productTitle}» удален`,
+        message: `${language === 'kk' ? 'Тауар өшірілді' : 'Товар удален'} «${productTitle}»`,
         type: 'info',
       });
     }
@@ -90,10 +92,10 @@ export const SellerProducts: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
-            Управление товарами
+            {t.seller.productsTab}
           </h1>
           <p className="text-xs text-gray-400 mt-1">
-            Всего в каталоге: <span className="font-bold text-gray-900 dark:text-white">{products.length} шт.</span>
+            {language === 'kk' ? 'Каталогтағы барлық тауар:' : 'Всего в каталоге:'} <span className="font-bold text-gray-900 dark:text-white">{products.length} {t.common.units}</span>
           </p>
         </div>
 
@@ -103,7 +105,7 @@ export const SellerProducts: React.FC = () => {
           className="inline-flex items-center gap-2 bg-[#F14635] hover:bg-[#E03221] text-white px-5 py-2.5 rounded-2xl font-bold text-xs transition-all shadow-xs active:scale-95 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>Новый товар</span>
+          <span>{t.seller.addProductBtn}</span>
         </button>
       </div>
 
@@ -117,7 +119,7 @@ export const SellerProducts: React.FC = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Поиск по названию или артикулу..."
+              placeholder={language === 'kk' ? 'Атауы немесе ID бойынша іздеу...' : 'Поиск по названию или артикулу...'}
               className="w-full bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white pl-10 pr-4 py-2.5 rounded-2xl text-xs outline-none shadow-xs border border-transparent focus:border-gray-200 dark:focus:border-neutral-700"
             />
           </div>
@@ -128,20 +130,20 @@ export const SellerProducts: React.FC = () => {
             onChange={(e) => setSelectedCategory(e.target.value as any)}
             className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white px-4 py-2.5 rounded-2xl text-xs font-bold outline-none shadow-xs cursor-pointer"
           >
-            <option value="all">Все категории</option>
-            <option value="headwear">Головные уборы</option>
-            <option value="tops">Верхняя одежда</option>
-            <option value="bottoms">Брюки и джинсы</option>
-            <option value="footwear">Обувь</option>
+            <option value="all">{t.catalog.allCategories}</option>
+            <option value="headwear">{t.catalog.categories.headwear}</option>
+            <option value="tops">{t.catalog.categories.tops}</option>
+            <option value="bottoms">{t.catalog.categories.bottoms}</option>
+            <option value="footwear">{t.catalog.categories.footwear}</option>
           </select>
         </div>
 
         {/* Status Pill Tabs */}
         <div className="flex items-center gap-2 pt-1 overflow-x-auto">
           {[
-            { id: 'all', label: `Все (${products.length})` },
-            { id: 'active', label: `Активные (${products.filter((p) => p.isActive).length})` },
-            { id: 'inactive', label: `Сняты с продажи (${products.filter((p) => !p.isActive).length})` },
+            { id: 'all', label: `${t.common.all} (${products.length})` },
+            { id: 'active', label: `${language === 'kk' ? 'Белсенді' : 'Активные'} (${products.filter((p) => p.isActive).length})` },
+            { id: 'inactive', label: `${language === 'kk' ? 'Жасырылған' : 'Сняты с продажи'} (${products.filter((p) => !p.isActive).length})` },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -164,21 +166,21 @@ export const SellerProducts: React.FC = () => {
         {filteredProducts.length === 0 ? (
           <div className="p-12 text-center space-y-3">
             <Boxes className="w-10 h-10 text-gray-300 mx-auto" />
-            <h4 className="font-bold text-sm text-gray-900 dark:text-white">Товары не найдены</h4>
-            <p className="text-xs text-gray-400">Попробуйте изменить параметры поиска или фильтров</p>
+            <h4 className="font-bold text-sm text-gray-900 dark:text-white">{t.catalog.noProductsTitle}</h4>
+            <p className="text-xs text-gray-400">{t.catalog.noProductsDesc}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-gray-50/80 dark:bg-[#161616] text-gray-400 font-bold uppercase tracking-wider text-[10px] border-b border-gray-100 dark:border-neutral-800">
                 <tr>
-                  <th className="py-3.5 px-5">Товар</th>
-                  <th className="py-3.5 px-4">Категория</th>
-                  <th className="py-3.5 px-4">Цена</th>
-                  <th className="py-3.5 px-4">Остаток на складе</th>
-                  <th className="py-3.5 px-4">Продажи</th>
-                  <th className="py-3.5 px-4 text-center">Статус</th>
-                  <th className="py-3.5 px-5 text-right">Действия</th>
+                  <th className="py-3.5 px-5">{t.seller.table.product}</th>
+                  <th className="py-3.5 px-4">{t.seller.table.category}</th>
+                  <th className="py-3.5 px-4">{t.seller.table.price}</th>
+                  <th className="py-3.5 px-4">{t.seller.table.stock}</th>
+                  <th className="py-3.5 px-4">{language === 'kk' ? 'Сатылымдар' : 'Продажи'}</th>
+                  <th className="py-3.5 px-4 text-center">{t.seller.table.status}</th>
+                  <th className="py-3.5 px-5 text-right">{t.seller.table.actions}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50 dark:divide-neutral-800/60 font-medium">
@@ -208,7 +210,7 @@ export const SellerProducts: React.FC = () => {
 
                     {/* Category */}
                     <td className="py-3.5 px-4 text-gray-500 dark:text-gray-400">
-                      {CATEGORIES.find((c) => c.id === product.category)?.name || product.category}
+                      {t.catalog.categories[product.category] || (CATEGORIES.find((c) => c.id === product.category)?.name || product.category)}
                     </td>
 
                     {/* Price */}
@@ -226,13 +228,13 @@ export const SellerProducts: React.FC = () => {
                           onChange={(e) => updateStock(product.id, Number(e.target.value))}
                           className="w-16 bg-gray-50 dark:bg-[#1a1a1a] text-gray-900 dark:text-white px-2.5 py-1.5 rounded-xl font-bold text-xs outline-none text-center"
                         />
-                        <span className="text-[10px] text-gray-400">шт.</span>
+                        <span className="text-[10px] text-gray-400">{t.common.units}</span>
                       </div>
                     </td>
 
                     {/* Sales */}
                     <td className="py-3.5 px-4 text-gray-500">
-                      <span className="font-bold text-gray-900 dark:text-white">{product.salesCount}</span> шт.
+                      <span className="font-bold text-gray-900 dark:text-white">{product.salesCount}</span> {t.common.units}
                     </td>
 
                     {/* Active Status Switch */}
@@ -248,11 +250,11 @@ export const SellerProducts: React.FC = () => {
                       >
                         {product.isActive ? (
                           <>
-                            <Eye className="w-3 h-3" /> В продаже
+                            <Eye className="w-3 h-3" /> {language === 'kk' ? 'Витринада' : 'В продаже'}
                           </>
                         ) : (
                           <>
-                            <EyeOff className="w-3 h-3" /> Скрыт
+                            <EyeOff className="w-3 h-3" /> {language === 'kk' ? 'Жасырылған' : 'Скрыт'}
                           </>
                         )}
                       </button>
@@ -264,7 +266,7 @@ export const SellerProducts: React.FC = () => {
                         type="button"
                         onClick={() => handleDelete(product.id, product.title)}
                         className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-colors cursor-pointer"
-                        title="Удалить товар"
+                        title={t.common.delete}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -283,12 +285,12 @@ export const SellerProducts: React.FC = () => {
           <div className="bg-white dark:bg-[#111111] max-w-lg w-full rounded-3xl p-6 sm:p-7 shadow-2xl border border-gray-100 dark:border-neutral-800 space-y-5">
             <div className="flex items-center justify-between">
               <h3 className="font-black text-lg text-gray-900 dark:text-white">
-                Добавить товар на витрину
+                {t.seller.addProductModal.title}
               </h3>
               <button
                 type="button"
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-xl"
+                className="p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-xl cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -297,35 +299,35 @@ export const SellerProducts: React.FC = () => {
             <form onSubmit={handleCreateProduct} className="space-y-4 text-xs">
               <div className="space-y-1.5">
                 <label className="font-bold text-gray-700 dark:text-gray-300 block">
-                  Название товара
+                  {t.seller.addProductModal.name}
                 </label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Например: Джинсы Straight Fit Vintage"
+                  placeholder="Straight Fit Denim"
                   className="w-full bg-gray-50 dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-3 rounded-2xl outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="font-bold text-gray-700 dark:text-gray-300 block">Категория</label>
+                  <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.category}</label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value as CategoryId)}
                     className="w-full bg-gray-50 dark:bg-[#1a1a1a] text-gray-900 dark:text-white p-3 rounded-2xl outline-none cursor-pointer"
                   >
-                    <option value="headwear">Головные уборы</option>
-                    <option value="tops">Верхняя одежда</option>
-                    <option value="bottoms">Брюки и джинсы</option>
-                    <option value="footwear">Обувь</option>
+                    <option value="headwear">{t.catalog.categories.headwear}</option>
+                    <option value="tops">{t.catalog.categories.tops}</option>
+                    <option value="bottoms">{t.catalog.categories.bottoms}</option>
+                    <option value="footwear">{t.catalog.categories.footwear}</option>
                   </select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="font-bold text-gray-700 dark:text-gray-300 block">Цена (₸)</label>
+                  <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.price}</label>
                   <input
                     type="number"
                     min="1"
@@ -339,7 +341,7 @@ export const SellerProducts: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="font-bold text-gray-700 dark:text-gray-300 block">Количество (шт.)</label>
+                  <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.stock}</label>
                   <input
                     type="number"
                     min="0"
@@ -351,7 +353,7 @@ export const SellerProducts: React.FC = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="font-bold text-gray-700 dark:text-gray-300 block">URL Фотографии</label>
+                  <label className="font-bold text-gray-700 dark:text-gray-300 block">{t.seller.addProductModal.imageUrl}</label>
                   <input
                     type="url"
                     required
@@ -366,15 +368,15 @@ export const SellerProducts: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-5 py-3 rounded-2xl font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
+                  className="px-5 py-3 rounded-2xl font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors cursor-pointer"
                 >
-                  Отмена
+                  {t.common.cancel}
                 </button>
                 <button
                   type="submit"
-                  className="bg-[#F14635] hover:bg-[#E03221] text-white px-7 py-3 rounded-2xl font-bold transition-all shadow-xs"
+                  className="bg-[#F14635] hover:bg-[#E03221] text-white px-7 py-3 rounded-2xl font-bold transition-all shadow-xs cursor-pointer"
                 >
-                  Опубликовать
+                  {t.common.save}
                 </button>
               </div>
             </form>
