@@ -20,7 +20,7 @@ export const useOrderStore = create<OrderState>()(
 
       createOrder: (items, totalAmount, paymentMethod, address) => {
         const newOrder: Order = {
-          id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
+          id: `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`,
           createdAt: new Date().toLocaleString('ru-RU', {
             year: 'numeric',
             month: '2-digit',

@@ -321,17 +321,17 @@ export const ProductDetailPage: React.FC = () => {
 
             {/* Guarantees */}
             <div className="grid grid-cols-3 gap-2 pt-2 text-[11px] text-gray-500">
-              <div className="flex items-center gap-1.5 bg-gray-50 p-2.5 rounded-xl">
-                <Truck className="w-3.5 h-3.5 text-gray-700 shrink-0" />
-                <span>Доставка 1-2 дня</span>
+              <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-[#111111] p-2.5 rounded-xl">
+                <Truck className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300 shrink-0" />
+                <span>{t.product.guarantees?.delivery || 'Доставка 1-2 дня'}</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-gray-50 p-2.5 rounded-xl">
-                <ShieldCheck className="w-3.5 h-3.5 text-gray-700 shrink-0" />
-                <span>100% оригинал</span>
+              <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-[#111111] p-2.5 rounded-xl">
+                <ShieldCheck className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300 shrink-0" />
+                <span>{t.product.guarantees?.original || '100% оригинал'}</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-gray-50 p-2.5 rounded-xl">
-                <RefreshCw className="w-3.5 h-3.5 text-gray-700 shrink-0" />
-                <span>Возврат 14 дней</span>
+              <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-[#111111] p-2.5 rounded-xl">
+                <RefreshCw className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300 shrink-0" />
+                <span>{t.product.guarantees?.returns || 'Возврат 14 дней'}</span>
               </div>
             </div>
           </div>
@@ -341,7 +341,9 @@ export const ProductDetailPage: React.FC = () => {
       {/* Related Products */}
       {relatedProducts.length > 0 && (
         <section className="space-y-6 pt-8">
-          <h2 className="text-2xl font-black text-gray-900 tracking-tight">Похожие товары</h2>
+          <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+            {t.product.similarProducts || 'Похожие товары'}
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedProducts.map((p) => (
               <ProductCard key={p.id} product={p} />

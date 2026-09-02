@@ -120,7 +120,7 @@ export const CatalogPage: React.FC = () => {
           <span className="text-xs text-gray-400">{t.catalog.sort.label}</span>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as 'popular' | 'price_asc' | 'price_desc' | 'rating')}
             className="bg-gray-50 dark:bg-[#111111] text-gray-800 dark:text-gray-100 text-xs font-semibold rounded-xl px-3 py-2 outline-none cursor-pointer hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
           >
             <option value="popular">{t.catalog.sort.popular}</option>

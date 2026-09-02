@@ -4,9 +4,9 @@ import { Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useT } from '../../i18n/useT';
 
-// Fixed Admin credentials
-const ADMIN_EMAIL = 'admin@kitapall.kz';
-const ADMIN_PASSWORD = 'admin123';
+// Configurable admin credentials via Vite ENV
+const DEFAULT_ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@kitapall.kz';
+const DEFAULT_ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'Admin@Kitap2026';
 
 export const AuthPage: React.FC = () => {
   const navigate = useNavigate();
@@ -32,15 +32,20 @@ export const AuthPage: React.FC = () => {
       return;
     }
 
+    if (password.length < 6) {
+      setError(language === 'kk' ? 'Құпиясөз кемінде 6 таңбадан тұруы керек' : 'Пароль должен содержать минимум 6 символов');
+      return;
+    }
+
     // Check if logging in as Admin
-    if (trimmedEmail === ADMIN_EMAIL) {
-      if (password !== ADMIN_PASSWORD) {
+    if (trimmedEmail === DEFAULT_ADMIN_EMAIL.toLowerCase()) {
+      if (password !== DEFAULT_ADMIN_PASSWORD) {
         setError(language === 'kk' ? 'Әкімші құпиясөзі қате' : 'Неверный пароль администратора');
         return;
       }
 
       // Log in as Admin
-      login(ADMIN_EMAIL, 'admin', 'Администратор');
+      login(DEFAULT_ADMIN_EMAIL, 'admin', 'Администратор');
       navigate('/admin');
       return;
     }

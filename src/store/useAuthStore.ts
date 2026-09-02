@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, Role } from '../types';
+import { useCartStore } from './useCartStore';
 
 interface AuthState {
   user: User | null;
@@ -35,6 +36,7 @@ export const useAuthStore = create<AuthState>()(
         });
       },
       logout: () => {
+        useCartStore.getState().clearCart();
         set({
           user: null,
           isAuthenticated: false,

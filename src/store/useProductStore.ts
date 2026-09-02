@@ -16,9 +16,10 @@ interface ProductState {
   setSortBy: (sort: 'popular' | 'price_asc' | 'price_desc' | 'rating') => void;
   
   // Admin & Warehouse Actions
-  addProduct: (product: Omit<Product, 'id' | 'createdAt'>) => void;
+  addProduct: (product: Omit<Product, 'id' | 'createdAt'>, customId?: string) => void;
   updateProduct: (id: string, updates: Partial<Product>) => void;
   updateStock: (id: string, newStock: number) => void;
+  decreaseStock: (id: string, count: number) => void;
   deleteProduct: (id: string) => void;
   resetToDefaults: () => void;
 }
@@ -35,10 +36,10 @@ export const useProductStore = create<ProductState>()(
       setSearchQuery: (query) => set({ searchQuery: sanitizeInput(query) }),
       setSortBy: (sort) => set({ sortBy: sort }),
 
-      addProduct: (newProd) => {
+      addProduct: (newProd, customId) => {
         const item: Product = {
           ...newProd,
-          id: `prod-${Date.now()}`,
+          id: customId || `prod-${Date.now()}`,
           title: sanitizeInput(newProd.title),
           brand: sanitizeInput(newProd.brand),
           price: sanitizePrice(newProd.price),
@@ -46,6 +47,8 @@ export const useProductStore = create<ProductState>()(
           stock: sanitizeStock(newProd.stock),
           imageUrl: sanitizeUrl(newProd.imageUrl, 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=80'),
           description: sanitizeInput(newProd.description),
+          sizes: newProd.sizes?.length ? newProd.sizes : ['Standard'],
+          colors: newProd.colors?.length ? newProd.colors : ['Default'],
           createdAt: new Date().toISOString().split('T')[0],
         };
         set((state) => ({ products: [item, ...state.products] }));
@@ -75,6 +78,14 @@ export const useProductStore = create<ProductState>()(
         set((state) => ({
           products: state.products.map((p) =>
             p.id === id ? { ...p, stock: safeStock } : p
+          ),
+        }));
+      },
+
+      decreaseStock: (id, count) => {
+        set((state) => ({
+          products: state.products.map((p) =>
+            p.id === id ? { ...p, stock: Math.max(0, p.stock - sanitizeStock(count, 1)) } : p
           ),
         }));
       },

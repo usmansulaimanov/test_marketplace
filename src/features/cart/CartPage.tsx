@@ -14,6 +14,9 @@ import { SafeImage } from '../../components/ui/SafeImage';
 import { useCartStore } from '../../store/useCartStore';
 import { useOrderStore } from '../../store/useOrderStore';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useProductStore } from '../../store/useProductStore';
+import { useSellerStore } from '../../store/useSellerStore';
+import { useToastStore } from '../../store/useToastStore';
 import { useT } from '../../i18n/useT';
 
 export const CartPage: React.FC = () => {
@@ -21,7 +24,10 @@ export const CartPage: React.FC = () => {
   const { t, language } = useT();
   const { items, updateQuantity, removeItem, clearCart, getTotalPrice } = useCartStore();
   const { createOrder } = useOrderStore();
-  const { updateBalance, isAuthenticated } = useAuthStore();
+  const { updateBalance, isAuthenticated, user } = useAuthStore();
+  const { decreaseStock, products } = useProductStore();
+  const { addOrder: addSellerOrder, recordSale, products: sellerProducts } = useSellerStore();
+  const { addToast } = useToastStore();
 
   const [address, setAddress] = useState(language === 'kk' ? 'Алматы қ., Абай даңғылы 150' : 'г. Алматы, пр. Абая 150');
   const [paymentMethod, setPaymentMethod] = useState<'kaspi_qr' | 'kaspi_gold' | 'card'>('kaspi_qr');
@@ -38,12 +44,61 @@ export const CartPage: React.FC = () => {
     }
 
     if (items.length === 0) return;
+
+    // Check stock availability
+    for (const item of items) {
+      const currentProduct = products.find((p) => p.id === item.product.id);
+      if (!currentProduct || currentProduct.stock < item.quantity) {
+        addToast({
+          message: language === 'kk'
+            ? `«${item.product.title}» тауары жеткіліксіз (қалғаны: ${currentProduct?.stock || 0})`
+            : `Недостаточно товара «${item.product.title}» на складе (осталось: ${currentProduct?.stock || 0})`,
+          type: 'error',
+        });
+        return;
+      }
+    }
+
     setIsProcessing(true);
 
     // Simulate instant payment in Kaspi style
     setTimeout(() => {
+      // 1. Create global customer order
       const newOrder = createOrder(items, finalAmount, paymentMethod, address);
       updateBalance(-finalAmount);
+
+      // 2. Decrease stock in main catalog
+      items.forEach((item) => {
+        decreaseStock(item.product.id, item.quantity);
+
+        // 3. If item is sold by a seller, update seller analytics and create seller order
+        const isSellerItem = sellerProducts.some((sp) => sp.id === item.product.id);
+        if (isSellerItem) {
+          recordSale(item.product.id, item.quantity, item.product.price);
+        }
+      });
+
+      // 4. Create seller order record for seller workspace
+      const sellerItems = items.filter((item) => sellerProducts.some((sp) => sp.id === item.product.id));
+      if (sellerItems.length > 0) {
+        addSellerOrder({
+          id: `SO-${newOrder.id.replace('ORD-', '')}`,
+          customerName: user?.name || 'Покупатель',
+          customerPhone: user?.email || '+7 777 000 00 00',
+          items: sellerItems.map((i) => ({
+            productId: i.product.id,
+            title: i.product.title,
+            price: i.product.price,
+            quantity: i.quantity,
+            size: i.selectedSize,
+          })),
+          totalAmount: sellerItems.reduce((acc, i) => acc + i.product.price * i.quantity, 0),
+          status: 'new',
+          date: new Date().toLocaleDateString('ru-RU'),
+          deliveryAddress: address,
+        });
+      }
+
       clearCart();
       setIsProcessing(false);
       navigate(`/order-success/${newOrder.id}`);
@@ -196,7 +251,7 @@ export const CartPage: React.FC = () => {
                     name="payment"
                     value="kaspi_qr"
                     checked={paymentMethod === 'kaspi_qr'}
-                    onChange={(e) => setPaymentMethod(e.target.value as any)}
+                    onChange={(e) => setPaymentMethod(e.target.value as 'kaspi_qr' | 'kaspi_gold' | 'card')}
                     className="accent-[#F14635] w-3.5 h-3.5"
                   />
                 </label>
@@ -209,7 +264,7 @@ export const CartPage: React.FC = () => {
                     name="payment"
                     value="kaspi_gold"
                     checked={paymentMethod === 'kaspi_gold'}
-                    onChange={(e) => setPaymentMethod(e.target.value as any)}
+                    onChange={(e) => setPaymentMethod(e.target.value as 'kaspi_qr' | 'kaspi_gold' | 'card')}
                     className="accent-[#F14635] w-3.5 h-3.5"
                   />
                 </label>

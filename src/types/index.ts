@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 export type CategoryId = 'all' | 'headwear' | 'tops' | 'bottoms' | 'footwear';
 
 export interface Category {

@@ -178,7 +178,7 @@ export const SellerOrders: React.FC = () => {
                   <div className="space-y-2">
                     {order.items.map((item, idx) => (
                       <div
-                        key={idx}
+                        key={`${order.id}-${item.productId}-${item.size || idx}`}
                         className="flex items-center justify-between gap-3 p-3 bg-gray-50 dark:bg-[#161616] rounded-2xl"
                       >
                         <div className="min-w-0">

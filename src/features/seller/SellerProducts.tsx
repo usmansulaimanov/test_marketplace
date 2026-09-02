@@ -127,7 +127,7 @@ export const SellerProducts: React.FC = () => {
           {/* Category Dropdown */}
           <select
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value as any)}
+            onChange={(e) => setSelectedCategory(e.target.value as CategoryId | 'all')}
             className="bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white px-4 py-2.5 rounded-2xl text-xs font-bold outline-none shadow-xs cursor-pointer"
           >
             <option value="all">{t.catalog.allCategories}</option>
@@ -148,7 +148,7 @@ export const SellerProducts: React.FC = () => {
             <button
               key={tab.id}
               type="button"
-              onClick={() => setStatusFilter(tab.id as any)}
+              onClick={() => setStatusFilter(tab.id as 'all' | 'active' | 'inactive')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 statusFilter === tab.id
                   ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xs'
