@@ -67,18 +67,18 @@ export const SellerAnalytics: React.FC = () => {
           <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
             {totalSalesUnits} шт.
           </h3>
-          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block">
-            Конверсия витрины: 3.8%
+          <span className="text-[10px] text-gray-400 font-medium block">
+            Конверсия: {orders.length > 0 ? '100%' : '0%'}
           </span>
         </div>
 
         <div className="bg-gray-50 dark:bg-[#111111] p-5 rounded-3xl space-y-2">
           <span className="text-xs text-gray-400 font-semibold block">Возвраты товаров</span>
           <h3 className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
-            0.4%
+            0%
           </h3>
           <span className="text-[10px] text-gray-400 font-medium block">
-            Идеальный показатель качества
+            Нет возвратов
           </span>
         </div>
       </div>

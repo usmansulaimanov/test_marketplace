@@ -42,7 +42,7 @@ export const useSellerStore = create<SellerState>()(
           ...newProduct,
           id: `sp-${Date.now()}`,
           salesCount: 0,
-          rating: 5.0,
+          rating: 0.0,
           reviewsCount: 0,
           createdAt: new Date().toISOString().split('T')[0],
         };
@@ -76,7 +76,7 @@ export const useSellerStore = create<SellerState>()(
       },
     }),
     {
-      name: 'kitapall-seller-store-v2',
+      name: 'kitapall-seller-store-v3',
     }
   )
 );

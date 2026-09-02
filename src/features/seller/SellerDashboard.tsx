@@ -98,8 +98,8 @@ export const SellerDashboard: React.FC = () => {
           <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
             {totalRevenue.toLocaleString()} ₸
           </h3>
-          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block">
-            +18.4% за этот месяц
+          <span className="text-[10px] text-gray-400 font-medium block">
+            {orders.length > 0 ? 'За все время' : 'Нет продаж'}
           </span>
         </div>
 
@@ -141,10 +141,10 @@ export const SellerDashboard: React.FC = () => {
             </div>
           </div>
           <h3 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight flex items-baseline gap-1">
-            4.9 <span className="text-xs text-gray-400 font-medium">/ 5.0</span>
+            0.0 <span className="text-xs text-gray-400 font-medium">/ 5.0</span>
           </h3>
           <span className="text-[10px] text-gray-400 font-medium block">
-            На основе 138 отзывов
+            Нет отзывов
           </span>
         </div>
       </div>
